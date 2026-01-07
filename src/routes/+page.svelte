@@ -5,16 +5,14 @@
 	import { welcomeScreenSeen, user } from '$lib/stores/userStore.js';
 	import { totalXP, lessonProgress, streak } from '$lib/stores/lessonStore.js';
 
-	let shouldShowWelcome = false;
-
 	// Check if user should see welcome screen
 	onMount(() => {
-		welcomeScreenSeen.subscribe(seen => {
+		const unsubscribe = welcomeScreenSeen.subscribe(seen => {
 			if (!seen) {
-				shouldShowWelcome = true;
 				goto(`${base}/welcome`);
 			}
-		})();
+		});
+		return unsubscribe;
 	});
 
 	const languages = [

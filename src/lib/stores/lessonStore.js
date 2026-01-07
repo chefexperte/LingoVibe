@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 import { browser } from '$app/environment';
 
 /**
@@ -155,11 +155,8 @@ function updateStreak() {
 	if (!browser) return;
 
 	const today = new Date().toISOString().split('T')[0];
-	let lastDate;
-	let currentStreak;
-
-	lastActiveDate.subscribe(date => lastDate = date)();
-	streak.subscribe(s => currentStreak = s)();
+	const lastDate = get(lastActiveDate);
+	const currentStreak = get(streak);
 
 	if (!lastDate) {
 		// First time
@@ -192,11 +189,8 @@ function updateStreak() {
  * @returns {boolean} True if completed
  */
 export function isLessonCompleted(lang, lessonId) {
-	let completed = false;
-	lessonProgress.subscribe(progress => {
-		completed = progress[lang]?.includes(lessonId) || false;
-	})();
-	return completed;
+	const progress = get(lessonProgress);
+	return progress[lang]?.includes(lessonId) || false;
 }
 
 /**
@@ -205,11 +199,8 @@ export function isLessonCompleted(lang, lessonId) {
  * @returns {number} Number of completed lessons
  */
 export function getCompletedCount(lang) {
-	let count = 0;
-	lessonProgress.subscribe(progress => {
-		count = progress[lang]?.length || 0;
-	})();
-	return count;
+	const progress = get(lessonProgress);
+	return progress[lang]?.length || 0;
 }
 
 /**

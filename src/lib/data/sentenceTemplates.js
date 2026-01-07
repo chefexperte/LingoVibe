@@ -65,7 +65,7 @@ export const sentenceTemplates = [
 	},
 	{
 		russian: 'У меня нет _____ .',
-		english: 'I don\'t have _____.',
+		english: 'I do not have _____.',
 		requiredCase: 'genitive',
 		difficulty: 'common',
 		explanation: 'After "нет" (there is no/not), we use the genitive case.'

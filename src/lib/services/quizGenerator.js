@@ -72,27 +72,33 @@ async function generateCaseFormationQuiz(difficulty, excludeWords = []) {
 	const targetCase = selectRandomCase(difficulty);
 	const nounData = selectRandomNounData(wordDifficulty, excludeWords);
 	
-	const declension = await fetchFullDeclension(nounData.word, {
-		gender: nounData.gender,
-		animacy: nounData.animacy,
-		translation: nounData.translation
-	});
+	try {
+		const declension = await fetchFullDeclension(nounData.word, {
+			gender: nounData.gender,
+			animacy: nounData.animacy,
+			translation: nounData.translation
+		});
 
-	const correctAnswer = declension.declension.singular[targetCase];
+		const correctAnswer = declension.declension.singular[targetCase];
 
-	return {
-		type: QUIZ_TYPES.CASE_FORMATION,
-		quizType: 'fill-in',
-		question: `What is the ${targetCase} form of the word?`,
-		word: nounData.word,
-		wordTranslation: nounData.translation,
-		targetCase: targetCase,
-		correctAnswer: correctAnswer,
-		correctAnswers: [correctAnswer], // For validation
-		declension: declension,
-		fromWiktionary: true,
-		difficulty: difficulty
-	};
+		return {
+			type: QUIZ_TYPES.CASE_FORMATION,
+			quizType: 'fill-in',
+			question: `What is the ${targetCase} form of the word?`,
+			word: nounData.word,
+			wordTranslation: nounData.translation,
+			targetCase: targetCase,
+			correctAnswer: correctAnswer,
+			correctAnswers: [correctAnswer], // For validation
+			declension: declension,
+			fromWiktionary: true,
+			difficulty: difficulty
+		};
+	} catch (error) {
+		console.error('Error generating case formation quiz:', error);
+		// Return a fallback quiz using the noun data without full declension
+		throw new Error('Failed to generate quiz question. Please try again.');
+	}
 }
 
 /**
@@ -106,51 +112,56 @@ async function generateCaseFormationMCQuiz(difficulty, excludeWords = []) {
 	const targetCase = selectRandomCase(difficulty);
 	const nounData = selectRandomNounData(wordDifficulty, excludeWords);
 	
-	const declension = await fetchFullDeclension(nounData.word, {
-		gender: nounData.gender,
-		animacy: nounData.animacy,
-		translation: nounData.translation
-	});
+	try {
+		const declension = await fetchFullDeclension(nounData.word, {
+			gender: nounData.gender,
+			animacy: nounData.animacy,
+			translation: nounData.translation
+		});
 
-	const correctAnswer = declension.declension.singular[targetCase];
-	
-	// Generate wrong answers from other cases of the same word
-	const wrongAnswers = [];
-	const allCases = ['nominative', 'genitive', 'dative', 'accusative', 'instrumental', 'prepositional'];
-	for (const c of allCases) {
-		if (c !== targetCase) {
-			const form = declension.declension.singular[c];
-			if (form !== correctAnswer && !wrongAnswers.includes(form)) {
-				wrongAnswers.push(form);
+		const correctAnswer = declension.declension.singular[targetCase];
+		
+		// Generate wrong answers from other cases of the same word
+		const wrongAnswers = [];
+		const allCases = ['nominative', 'genitive', 'dative', 'accusative', 'instrumental', 'prepositional'];
+		for (const c of allCases) {
+			if (c !== targetCase) {
+				const form = declension.declension.singular[c];
+				if (form !== correctAnswer && !wrongAnswers.includes(form)) {
+					wrongAnswers.push(form);
+				}
 			}
 		}
+
+		// Shuffle and take 3 wrong answers
+		const shuffledWrong = wrongAnswers.sort(() => Math.random() - 0.5).slice(0, 3);
+		
+		// Create options
+		const options = [
+			{ text: correctAnswer, correct: true },
+			...shuffledWrong.map(ans => ({ text: ans, correct: false }))
+		];
+
+		// Shuffle options
+		options.sort(() => Math.random() - 0.5);
+
+		return {
+			type: QUIZ_TYPES.CASE_FORMATION_MC,
+			quizType: 'multiple-choice',
+			question: `What is the ${targetCase} form of "${nounData.word}"?`,
+			word: nounData.word,
+			wordTranslation: nounData.translation,
+			targetCase: targetCase,
+			options: options,
+			correctAnswer: correctAnswer,
+			declension: declension,
+			fromWiktionary: true,
+			difficulty: difficulty
+		};
+	} catch (error) {
+		console.error('Error generating case formation MC quiz:', error);
+		throw new Error('Failed to generate quiz question. Please try again.');
 	}
-
-	// Shuffle and take 3 wrong answers
-	const shuffledWrong = wrongAnswers.sort(() => Math.random() - 0.5).slice(0, 3);
-	
-	// Create options
-	const options = [
-		{ text: correctAnswer, correct: true },
-		...shuffledWrong.map(ans => ({ text: ans, correct: false }))
-	];
-
-	// Shuffle options
-	options.sort(() => Math.random() - 0.5);
-
-	return {
-		type: QUIZ_TYPES.CASE_FORMATION_MC,
-		quizType: 'multiple-choice',
-		question: `What is the ${targetCase} form of "${nounData.word}"?`,
-		word: nounData.word,
-		wordTranslation: nounData.translation,
-		targetCase: targetCase,
-		options: options,
-		correctAnswer: correctAnswer,
-		declension: declension,
-		fromWiktionary: true,
-		difficulty: difficulty
-	};
 }
 
 /**
@@ -163,47 +174,52 @@ async function generateCaseIdentificationQuiz(difficulty, excludeWords = []) {
 	const wordDifficulty = mapDifficultyToWordLevel(difficulty);
 	const nounData = selectRandomNounData(wordDifficulty, excludeWords);
 	
-	const declension = await fetchFullDeclension(nounData.word, {
-		gender: nounData.gender,
-		animacy: nounData.animacy,
-		translation: nounData.translation
-	});
+	try {
+		const declension = await fetchFullDeclension(nounData.word, {
+			gender: nounData.gender,
+			animacy: nounData.animacy,
+			translation: nounData.translation
+		});
 
-	// Select a random case (not nominative for more challenge)
-	const availableCases = ['genitive', 'dative', 'accusative', 'instrumental', 'prepositional'];
-	const targetCase = availableCases[Math.floor(Math.random() * availableCases.length)];
-	
-	const declinedWord = declension.declension.singular[targetCase];
+		// Select a random case (not nominative for more challenge)
+		const availableCases = ['genitive', 'dative', 'accusative', 'instrumental', 'prepositional'];
+		const targetCase = availableCases[Math.floor(Math.random() * availableCases.length)];
+		
+		const declinedWord = declension.declension.singular[targetCase];
 
-	// Find all cases that have the same form (there might be multiple correct answers)
-	const correctCases = [];
-	for (const [caseName, form] of Object.entries(declension.declension.singular)) {
-		if (areWordsEquivalent(form, declinedWord, true)) {
-			correctCases.push(caseName);
+		// Find all cases that have the same form (there might be multiple correct answers)
+		const correctCases = [];
+		for (const [caseName, form] of Object.entries(declension.declension.singular)) {
+			if (areWordsEquivalent(form, declinedWord, true)) {
+				correctCases.push(caseName);
+			}
 		}
+
+		// Create options for all 6 cases
+		const options = russianCases.map(caseName => ({
+			text: capitalize(caseName),
+			value: caseName,
+			correct: correctCases.includes(caseName)
+		}));
+
+		return {
+			type: QUIZ_TYPES.CASE_IDENTIFICATION,
+			quizType: 'multiple-choice',
+			question: `The word "${declinedWord}" is in which case? (Multiple answers may be correct)`,
+			word: nounData.word,
+			wordTranslation: nounData.translation,
+			declinedWord: declinedWord,
+			options: options,
+			correctCases: correctCases,
+			declension: declension,
+			fromWiktionary: true,
+			difficulty: difficulty,
+			multipleCorrect: correctCases.length > 1
+		};
+	} catch (error) {
+		console.error('Error generating case identification quiz:', error);
+		throw new Error('Failed to generate quiz question. Please try again.');
 	}
-
-	// Create options for all 6 cases
-	const options = russianCases.map(caseName => ({
-		text: capitalize(caseName),
-		value: caseName,
-		correct: correctCases.includes(caseName)
-	}));
-
-	return {
-		type: QUIZ_TYPES.CASE_IDENTIFICATION,
-		quizType: 'multiple-choice',
-		question: `The word "${declinedWord}" is in which case? (Multiple answers may be correct)`,
-		word: nounData.word,
-		wordTranslation: nounData.translation,
-		declinedWord: declinedWord,
-		options: options,
-		correctCases: correctCases,
-		declension: declension,
-		fromWiktionary: true,
-		difficulty: difficulty,
-		multipleCorrect: correctCases.length > 1
-	};
 }
 
 /**
@@ -217,30 +233,35 @@ async function generateSentenceCompletionQuiz(difficulty, excludeWords = []) {
 	const template = getRandomTemplate(wordDifficulty);
 	const nounData = selectRandomNounData(wordDifficulty, excludeWords);
 	
-	const declension = await fetchFullDeclension(nounData.word, {
-		gender: nounData.gender,
-		animacy: nounData.animacy,
-		translation: nounData.translation
-	});
+	try {
+		const declension = await fetchFullDeclension(nounData.word, {
+			gender: nounData.gender,
+			animacy: nounData.animacy,
+			translation: nounData.translation
+		});
 
-	const correctAnswer = declension.declension.singular[template.requiredCase];
+		const correctAnswer = declension.declension.singular[template.requiredCase];
 
-	return {
-		type: QUIZ_TYPES.SENTENCE_COMPLETION,
-		quizType: 'fill-in',
-		question: 'Complete the sentence:',
-		sentenceRussian: template.russian,
-		sentenceEnglish: template.english,
-		word: nounData.word,
-		wordTranslation: nounData.translation,
-		requiredCase: template.requiredCase,
-		correctAnswer: correctAnswer,
-		correctAnswers: [correctAnswer],
-		declension: declension,
-		explanation: template.explanation,
-		fromWiktionary: true,
-		difficulty: difficulty
-	};
+		return {
+			type: QUIZ_TYPES.SENTENCE_COMPLETION,
+			quizType: 'fill-in',
+			question: 'Complete the sentence:',
+			sentenceRussian: template.russian,
+			sentenceEnglish: template.english,
+			word: nounData.word,
+			wordTranslation: nounData.translation,
+			requiredCase: template.requiredCase,
+			correctAnswer: correctAnswer,
+			correctAnswers: [correctAnswer],
+			declension: declension,
+			explanation: template.explanation,
+			fromWiktionary: true,
+			difficulty: difficulty
+		};
+	} catch (error) {
+		console.error('Error generating sentence completion quiz:', error);
+		throw new Error('Failed to generate quiz question. Please try again.');
+	}
 }
 
 /**

@@ -47,12 +47,12 @@
 		
 		<!-- Russian Sentence -->
 		<div class="sentence-display russian">
-			{quiz.sentenceRussian.replace('_____', '___')}
+			{quiz.sentenceRussian}
 		</div>
 
 		<!-- English Translation -->
 		<div class="sentence-display english">
-			{quiz.sentenceEnglish.replace('_____', '___')}
+			{quiz.sentenceEnglish}
 		</div>
 
 		<!-- Word to Use -->

@@ -26,6 +26,29 @@ body {
 	line-height: 1.6;
 }
 
+/* Global link styles - remove underlines except on hover */
+a {
+	text-decoration: none;
+	color: var(--primary-color);
+	transition: opacity 0.2s;
+}
+
+a:hover {
+	opacity: 0.8;
+}
+
+/* Footer links specifically */
+footer a {
+	color: var(--primary-color);
+	text-decoration: none;
+	font-weight: 600;
+}
+
+footer a:hover {
+	text-decoration: underline;
+	opacity: 1;
+}
+
 .container {
 	max-width: 1200px;
 	margin: 0 auto;
@@ -46,6 +69,22 @@ header .container {
 	justify-content: space-between;
 	align-items: center;
 	padding: 15px 20px;
+}
+
+.header-left {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.desktop-nav {
+	display: flex;
+	gap: 30px;
+	align-items: center;
+}
+
+.mobile-user-section {
+	display: none;
 }
 
 .logo {
@@ -77,6 +116,7 @@ nav a:hover,
 nav a.active {
 	background-color: var(--primary-color);
 	color: white;
+	opacity: 1;
 }
 
 .github-login {
@@ -683,13 +723,27 @@ h3 {
 		font-size: 16px;
 	}
 
-	nav {
-		gap: 15px;
+	.desktop-nav {
+		display: none;
 	}
 
-	nav a {
-		padding: 6px 12px;
-		font-size: 14px;
+	.mobile-user-section {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.user-xp-mobile {
+		font-size: 12px;
+		background: var(--primary-color);
+		color: white;
+		padding: 4px 10px;
+		border-radius: 12px;
+		font-weight: 600;
+	}
+
+	.sync-status-mobile {
+		font-size: 12px;
 	}
 
 	.logo {

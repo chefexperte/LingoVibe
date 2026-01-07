@@ -1,4 +1,5 @@
 <script>
+	import { base } from '$app/paths';
 	import { githubUser, isGithubAuthenticated } from '$lib/stores/syncStore.js';
 	import { signOut } from '$lib/services/githubAuth.js';
 	import { resetSyncState } from '$lib/stores/syncStore.js';
@@ -49,7 +50,7 @@
 				
 				<div class="menu-divider"></div>
 				
-				<a href="/LingoVibe/settings" class="menu-item menu-link">
+				<a href="{base}/settings" class="menu-item menu-link">
 					⚙️ Settings
 				</a>
 				

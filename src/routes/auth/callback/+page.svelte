@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { base } from '$app/paths';
 	import { 
 		validateOAuthState, 
 		exchangeCodeForToken, 
@@ -59,7 +60,7 @@
 			
 			// Redirect to home after 2 seconds
 			setTimeout(() => {
-				goto('/LingoVibe/');
+				goto(`${base}/`);
 			}, 2000);
 			
 		} catch (err) {
@@ -70,7 +71,7 @@
 			
 			// Redirect to home after 3 seconds
 			setTimeout(() => {
-				goto('/LingoVibe/');
+				goto(`${base}/`);
 			}, 3000);
 		}
 	});

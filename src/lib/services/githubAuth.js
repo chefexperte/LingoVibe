@@ -9,7 +9,7 @@ import { browser } from '$app/environment';
 // Users need to register a GitHub OAuth App at: https://github.com/settings/developers
 // For local development: http://localhost:5173/LingoVibe/auth/callback
 // For production: https://chefexperte.github.io/LingoVibe/auth/callback
-const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID || 'Ov23lizdY6fUEwbpvD8R';
+const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID || '';
 const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI || 
 	(browser && window.location.origin + '/LingoVibe/auth/callback');
 

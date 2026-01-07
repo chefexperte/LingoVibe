@@ -59,11 +59,11 @@ The nominative case is the "dictionary form" - it's how words appear in dictiona
 					heading: 'Common Russian Nouns in Nominative Case',
 					text: 'Here are some essential Russian words. Pay attention to their nominative forms:',
 					words: [
-						{ word: 'стол', example: 'Стол большой.' },
-						{ word: 'книга', example: 'Книга интересная.' },
-						{ word: 'окно', example: 'Окно открыто.' },
-						{ word: 'студент', example: 'Студент учится.' },
-						{ word: 'вода', example: 'Вода холодная.' }
+						{ word: 'стол', example: 'Стол большой.', commonness: 'common' },
+						{ word: 'книга', example: 'Книга интересная.', commonness: 'common' },
+						{ word: 'окно', example: 'Окно открыто.', commonness: 'common' },
+						{ word: 'студент', example: 'Студент учится.', commonness: 'common' },
+						{ word: 'вода', example: 'Вода холодная.', commonness: 'common' }
 					]
 				}
 			},

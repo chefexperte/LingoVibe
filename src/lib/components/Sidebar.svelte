@@ -48,10 +48,16 @@
 	};
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- Overlay with proper keyboard handling -->
 {#if isOpen}
-	<div class="sidebar-overlay" on:click={handleOverlayClick} role="presentation"></div>
+	<div 
+		class="sidebar-overlay" 
+		on:click={handleOverlayClick}
+		on:keydown={(e) => e.key === 'Enter' && handleOverlayClick()}
+		role="button"
+		tabindex="-1"
+		aria-label="Close sidebar"
+	></div>
 {/if}
 
 <aside class="sidebar" class:open={isOpen}>

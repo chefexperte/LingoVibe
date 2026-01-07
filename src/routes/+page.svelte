@@ -4,6 +4,7 @@
 	import { base } from '$app/paths';
 	import { welcomeScreenSeen, user } from '$lib/stores/userStore.js';
 	import { totalXP, lessonProgress, streak } from '$lib/stores/lessonStore.js';
+	import { LANGUAGES } from '$lib/utils/constants.js';
 
 	// Check if user should see welcome screen
 	onMount(() => {
@@ -14,16 +15,6 @@
 		});
 		return unsubscribe;
 	});
-
-	const languages = [
-		{ code: 'ru', name: 'Russian', flag: '🇷🇺', status: 'available', description: 'Full course available' },
-		{ code: 'es', name: 'Spanish', flag: '🇪🇸', status: 'coming-soon', description: 'Coming Soon' },
-		{ code: 'fr', name: 'French', flag: '🇫🇷', status: 'coming-soon', description: 'Coming Soon' },
-		{ code: 'de', name: 'German', flag: '🇩🇪', status: 'coming-soon', description: 'Coming Soon' },
-		{ code: 'it', name: 'Italian', flag: '🇮🇹', status: 'coming-soon', description: 'Coming Soon' },
-		{ code: 'ja', name: 'Japanese', flag: '🇯🇵', status: 'coming-soon', description: 'Coming Soon' },
-		{ code: 'ko', name: 'Korean', flag: '🇰🇷', status: 'coming-soon', description: 'Coming Soon' }
-	];
 
 	$: russianProgress = $lessonProgress['ru']?.length || 0;
 </script>
@@ -65,7 +56,7 @@
 
 	<h2>Available Courses</h2>
 	<div class="grid grid-3">
-		{#each languages as lang}
+		{#each LANGUAGES as lang}
 			{#if lang.status === 'available'}
 				<a href="{base}/learn/{lang.code}" class="card card-clickable language-card-container">
 					<div class="language-card">

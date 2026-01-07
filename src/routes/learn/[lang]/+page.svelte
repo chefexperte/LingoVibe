@@ -5,12 +5,12 @@
 	import { lessonProgress, totalXP } from '$lib/stores/lessonStore.js';
 
 	const languageData = {
-		spanish: { name: 'Spanish', flag: '🇪🇸', status: 'coming-soon' },
-		french: { name: 'French', flag: '🇫🇷', status: 'coming-soon' },
-		german: { name: 'German', flag: '🇩🇪', status: 'coming-soon' },
-		italian: { name: 'Italian', flag: '🇮🇹', status: 'coming-soon' },
-		japanese: { name: 'Japanese', flag: '🇯🇵', status: 'coming-soon' },
-		korean: { name: 'Korean', flag: '🇰🇷', status: 'coming-soon' },
+		es: { name: 'Spanish', flag: '🇪🇸', status: 'coming-soon' },
+		fr: { name: 'French', flag: '🇫🇷', status: 'coming-soon' },
+		de: { name: 'German', flag: '🇩🇪', status: 'coming-soon' },
+		it: { name: 'Italian', flag: '🇮🇹', status: 'coming-soon' },
+		ja: { name: 'Japanese', flag: '🇯🇵', status: 'coming-soon' },
+		ko: { name: 'Korean', flag: '🇰🇷', status: 'coming-soon' },
 		ru: { name: 'Russian', flag: '🇷🇺', status: 'available' }
 	};
 

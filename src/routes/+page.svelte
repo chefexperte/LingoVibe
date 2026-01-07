@@ -17,12 +17,12 @@
 
 	const languages = [
 		{ code: 'ru', name: 'Russian', flag: '🇷🇺', status: 'available', description: 'Full course available' },
-		{ code: 'spanish', name: 'Spanish', flag: '🇪🇸', status: 'coming-soon', description: 'Coming Soon' },
-		{ code: 'french', name: 'French', flag: '🇫🇷', status: 'coming-soon', description: 'Coming Soon' },
-		{ code: 'german', name: 'German', flag: '🇩🇪', status: 'coming-soon', description: 'Coming Soon' },
-		{ code: 'italian', name: 'Italian', flag: '🇮🇹', status: 'coming-soon', description: 'Coming Soon' },
-		{ code: 'japanese', name: 'Japanese', flag: '🇯🇵', status: 'coming-soon', description: 'Coming Soon' },
-		{ code: 'korean', name: 'Korean', flag: '🇰🇷', status: 'coming-soon', description: 'Coming Soon' }
+		{ code: 'es', name: 'Spanish', flag: '🇪🇸', status: 'coming-soon', description: 'Coming Soon' },
+		{ code: 'fr', name: 'French', flag: '🇫🇷', status: 'coming-soon', description: 'Coming Soon' },
+		{ code: 'de', name: 'German', flag: '🇩🇪', status: 'coming-soon', description: 'Coming Soon' },
+		{ code: 'it', name: 'Italian', flag: '🇮🇹', status: 'coming-soon', description: 'Coming Soon' },
+		{ code: 'ja', name: 'Japanese', flag: '🇯🇵', status: 'coming-soon', description: 'Coming Soon' },
+		{ code: 'ko', name: 'Korean', flag: '🇰🇷', status: 'coming-soon', description: 'Coming Soon' }
 	];
 
 	$: russianProgress = $lessonProgress['ru']?.length || 0;

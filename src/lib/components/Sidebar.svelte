@@ -5,6 +5,7 @@
 	 */
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 	
 	export let isOpen = false;
 	export let onClose = () => {};
@@ -24,6 +25,21 @@
 		onClose();
 	}
 	
+	function handleKeyDown(event) {
+		if (event.key === 'Escape' && isOpen) {
+			onClose();
+		}
+	}
+	
+	onMount(() => {
+		// Add escape key listener when component mounts
+		window.addEventListener('keydown', handleKeyDown);
+		
+		return () => {
+			window.removeEventListener('keydown', handleKeyDown);
+		};
+	});
+	
 	$: isActive = (path) => {
 		if (path === '/') {
 			return $page.url.pathname === `${base}/` || $page.url.pathname === `${base}`;
@@ -35,7 +51,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 {#if isOpen}
-	<div class="sidebar-overlay" on:click={handleOverlayClick}></div>
+	<div class="sidebar-overlay" on:click={handleOverlayClick} role="presentation"></div>
 {/if}
 
 <aside class="sidebar" class:open={isOpen}>

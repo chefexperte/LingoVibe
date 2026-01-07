@@ -18,15 +18,17 @@
 	}
 </script>
 
-<div class="difficulty-selector">
-	<label class="selector-label">Word Difficulty</label>
+<div class="difficulty-selector" role="group" aria-labelledby="difficulty-label">
+	<span id="difficulty-label" class="selector-label">Word Difficulty</span>
 	<div class="difficulty-options">
 		{#each difficulties as difficulty}
 			<button
 				class="difficulty-option {selected === difficulty.value ? 'selected' : ''}"
 				on:click={() => handleChange(difficulty.value)}
+				aria-label="{difficulty.label}: {difficulty.description}"
+				aria-pressed={selected === difficulty.value}
 			>
-				<div class="difficulty-icon">{difficulty.icon}</div>
+				<div class="difficulty-icon" aria-hidden="true">{difficulty.icon}</div>
 				<div class="difficulty-content">
 					<div class="difficulty-label">{difficulty.label}</div>
 					<div class="difficulty-description">{difficulty.description}</div>

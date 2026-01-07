@@ -76,6 +76,28 @@ The built files will be in the `build` directory.
 npm run preview
 ```
 
+#### Running Tests
+
+LingoVibe uses Vitest for unit testing. The test suite covers stores, services, and utility functions.
+
+```bash
+# Run tests in watch mode
+npm test
+
+# Run tests with UI
+npm run test:ui
+
+# Run tests with coverage report
+npm run test:coverage
+```
+
+Test coverage includes:
+- ✅ Store logic (user, lessons, quizzes)
+- ✅ Utility functions (formatters, validators)
+- ✅ Business logic and state management
+
+Target coverage: >70% on core business logic
+
 ## 🔐 GitHub OAuth Setup
 
 To enable cloud sync features, you need to set up GitHub OAuth. See [GITHUB_OAUTH_SETUP.md](GITHUB_OAUTH_SETUP.md) for detailed instructions.
@@ -162,15 +184,34 @@ LingoVibe/
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+### Development Workflow
+
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+3. Make your changes
+4. Run tests to ensure everything works (`npm test`)
+5. Build the project to verify (`npm run build`)
+6. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+7. Push to the branch (`git push origin feature/AmazingFeature`)
+8. Open a Pull Request
+
+### Code Quality Guidelines
+
+- Write tests for new features
+- Follow existing code style and patterns
+- Use the provided utility functions (in `src/lib/utils/`)
+- Ensure accessibility (ARIA labels, keyboard navigation)
+- Test responsive design on mobile and desktop
 
 ## 📄 License
 
-This project is open source and available under the MIT License.
+This project is open source and available under the [MIT License](LICENSE).
+
+### What this means:
+- ✅ Free to use, modify, and distribute
+- ✅ Can be used commercially
+- ✅ No warranty provided
+- ✅ Attribution appreciated but not required
 
 ## 🙏 Acknowledgments
 

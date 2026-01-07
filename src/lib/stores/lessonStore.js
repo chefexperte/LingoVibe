@@ -1,6 +1,14 @@
 import { writable, get } from 'svelte/store';
 import { browser } from '$app/environment';
 
+// Import sync trigger (lazy to avoid circular dependency)
+let triggerAutoSync;
+if (browser) {
+	import('./syncStore.js').then(module => {
+		triggerAutoSync = module.triggerAutoSync;
+	});
+}
+
 /**
  * Get initial lesson progress from localStorage
  */
@@ -89,6 +97,10 @@ if (browser) {
 	lessonProgress.subscribe(value => {
 		try {
 			localStorage.setItem('lessonProgress', JSON.stringify(value));
+			// Trigger auto-sync when progress changes
+			if (triggerAutoSync) {
+				triggerAutoSync();
+			}
 		} catch (e) {
 			console.error('Error saving lesson progress:', e);
 		}
@@ -97,6 +109,10 @@ if (browser) {
 	totalXP.subscribe(value => {
 		try {
 			localStorage.setItem('totalXP', value.toString());
+			// Trigger auto-sync when XP changes
+			if (triggerAutoSync) {
+				triggerAutoSync();
+			}
 		} catch (e) {
 			console.error('Error saving XP:', e);
 		}
@@ -105,6 +121,10 @@ if (browser) {
 	streak.subscribe(value => {
 		try {
 			localStorage.setItem('streak', value.toString());
+			// Trigger auto-sync when streak changes
+			if (triggerAutoSync) {
+				triggerAutoSync();
+			}
 		} catch (e) {
 			console.error('Error saving streak:', e);
 		}

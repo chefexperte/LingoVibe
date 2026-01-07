@@ -1,6 +1,14 @@
 import { writable, derived } from 'svelte/store';
 import { browser } from '$app/environment';
 
+// Import sync trigger (lazy to avoid circular dependency)
+let triggerAutoSync;
+if (browser) {
+	import('./syncStore.js').then(module => {
+		triggerAutoSync = module.triggerAutoSync;
+	});
+}
+
 /**
  * Get initial user data from localStorage
  */
@@ -55,6 +63,10 @@ if (browser) {
 				localStorage.setItem('lingovibeUser', JSON.stringify(value));
 			} else {
 				localStorage.removeItem('lingovibeUser');
+			}
+			// Trigger auto-sync when user data changes
+			if (triggerAutoSync) {
+				triggerAutoSync();
 			}
 		} catch (e) {
 			console.error('Error saving user data:', e);

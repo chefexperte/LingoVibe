@@ -26,6 +26,41 @@ body {
 	line-height: 1.6;
 }
 
+/* Global link styles - maintain visual distinction while being clean */
+a {
+	color: var(--primary-color);
+	text-decoration: underline;
+	text-decoration-color: transparent;
+	transition: text-decoration-color 0.2s;
+}
+
+a:hover {
+	text-decoration-color: var(--primary-color);
+}
+
+/* Card links don't need underlines */
+.card a,
+a.card,
+.language-card-container {
+	text-decoration: none;
+}
+
+/* Navigation links */
+nav a {
+	text-decoration: none;
+}
+
+/* Footer links */
+footer a {
+	color: var(--primary-color);
+	text-decoration: none;
+	font-weight: 600;
+}
+
+footer a:hover {
+	text-decoration: underline;
+}
+
 .container {
 	max-width: 1200px;
 	margin: 0 auto;
@@ -46,6 +81,22 @@ header .container {
 	justify-content: space-between;
 	align-items: center;
 	padding: 15px 20px;
+}
+
+.header-left {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.desktop-nav {
+	display: flex;
+	gap: 30px;
+	align-items: center;
+}
+
+.mobile-user-section {
+	display: none;
 }
 
 .logo {
@@ -77,6 +128,7 @@ nav a:hover,
 nav a.active {
 	background-color: var(--primary-color);
 	color: white;
+	opacity: 1;
 }
 
 .github-login {
@@ -683,13 +735,27 @@ h3 {
 		font-size: 16px;
 	}
 
-	nav {
-		gap: 15px;
+	.desktop-nav {
+		display: none;
 	}
 
-	nav a {
-		padding: 6px 12px;
-		font-size: 14px;
+	.mobile-user-section {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.user-xp-mobile {
+		font-size: 12px;
+		background: var(--primary-color);
+		color: white;
+		padding: 4px 10px;
+		border-radius: 12px;
+		font-weight: 600;
+	}
+
+	.sync-status-mobile {
+		font-size: 12px;
 	}
 
 	.logo {

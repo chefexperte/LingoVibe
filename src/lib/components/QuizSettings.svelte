@@ -38,15 +38,17 @@
 	<h3>Quiz Settings</h3>
 	
 	<!-- Quiz Type Selector -->
-	<div class="setting-group">
-		<label class="setting-label">Quiz Type</label>
+	<div class="setting-group" role="group" aria-labelledby="quiz-type-label">
+		<span id="quiz-type-label" class="setting-label">Quiz Type</span>
 		<div class="quiz-type-options">
 			{#each quizTypeOptions as option}
 				<button
 					class="quiz-type-option {settings.quizType === option.value ? 'selected' : ''}"
 					on:click={() => settings.quizType = option.value}
+					aria-label={option.label}
+					aria-pressed={settings.quizType === option.value}
 				>
-					<span class="option-icon">{option.icon}</span>
+					<span class="option-icon" aria-hidden="true">{option.icon}</span>
 					<span class="option-label">{option.label}</span>
 				</button>
 			{/each}
@@ -54,15 +56,17 @@
 	</div>
 
 	<!-- Difficulty Selector -->
-	<div class="setting-group">
-		<label class="setting-label">Difficulty</label>
+	<div class="setting-group" role="group" aria-labelledby="difficulty-label">
+		<span id="difficulty-label" class="setting-label">Difficulty</span>
 		<div class="difficulty-options">
 			{#each difficultyOptions as option}
 				<button
 					class="difficulty-option {settings.difficulty === option.value ? 'selected' : ''}"
 					on:click={() => settings.difficulty = option.value}
+					aria-label="{option.label}: {option.description}"
+					aria-pressed={settings.difficulty === option.value}
 				>
-					<div class="difficulty-icon">{option.icon}</div>
+					<div class="difficulty-icon" aria-hidden="true">{option.icon}</div>
 					<div class="difficulty-content">
 						<div class="difficulty-label">{option.label}</div>
 						<div class="difficulty-description">{option.description}</div>
@@ -73,13 +77,15 @@
 	</div>
 
 	<!-- Question Count Selector -->
-	<div class="setting-group">
-		<label class="setting-label">Number of Questions</label>
+	<div class="setting-group" role="group" aria-labelledby="question-count-label">
+		<span id="question-count-label" class="setting-label">Number of Questions</span>
 		<div class="question-count-options">
 			{#each questionCountOptions as count}
 				<button
 					class="count-option {settings.questionCount === count ? 'selected' : ''}"
 					on:click={() => settings.questionCount = count}
+					aria-label="{count} questions"
+					aria-pressed={settings.questionCount === count}
 				>
 					{count}
 				</button>

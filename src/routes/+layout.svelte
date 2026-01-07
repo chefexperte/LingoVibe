@@ -7,16 +7,27 @@
 	import LoginButton from '$lib/components/LoginButton.svelte';
 	import UserProfile from '$lib/components/UserProfile.svelte';
 	import SyncStatus from '$lib/components/SyncStatus.svelte';
+	import MobileMenu from '$lib/components/MobileMenu.svelte';
+	import Sidebar from '$lib/components/Sidebar.svelte';
 	import '../app.css';
 	
 	let showUserMenu = false;
 	let showGithubMenu = false;
+	let showMobileSidebar = false;
 	
 	function handleLogout() {
 		if (confirm('Are you sure you want to log out? Your progress will be saved.')) {
 			logout();
 			showUserMenu = false;
 		}
+	}
+	
+	function toggleMobileSidebar() {
+		showMobileSidebar = !showMobileSidebar;
+	}
+	
+	function closeMobileSidebar() {
+		showMobileSidebar = false;
 	}
 </script>
 
@@ -26,11 +37,14 @@
 
 <header>
 	<div class="container">
-		<a href="{base}/" class="logo">
-			<span>🌍</span>
-			<span>LingoVibe</span>
-		</a>
-		<nav>
+		<div class="header-left">
+			<MobileMenu isOpen={showMobileSidebar} onClick={toggleMobileSidebar} />
+			<a href="{base}/" class="logo">
+				<span>🌍</span>
+				<span>LingoVibe</span>
+			</a>
+		</div>
+		<nav class="desktop-nav">
 			<a href="{base}/" class:active={$page.url.pathname === `${base}/`}>Home</a>
 			<a href="{base}/learn" class:active={$page.url.pathname.startsWith(`${base}/learn`)}>Learn</a>
 			<a href="{base}/practice" class:active={$page.url.pathname === `${base}/practice`}>Practice</a>
@@ -71,8 +85,19 @@
 				</div>
 			{/if}
 		</nav>
+		<div class="mobile-user-section">
+			{#if $isGithubAuthenticated}
+				<div class="sync-status-mobile">
+					<SyncStatus />
+				</div>
+			{:else if $user}
+				<div class="user-xp-mobile">{$totalXP} XP</div>
+			{/if}
+		</div>
 	</div>
 </header>
+
+<Sidebar isOpen={showMobileSidebar} onClose={closeMobileSidebar} />
 
 <main>
 	<slot />
@@ -80,6 +105,6 @@
 
 <footer>
 	<div class="container">
-		<p>&copy; 2026 LingoVibe. All rights reserved.</p>
+		<p>LingoVibe © 2026 | Open Source (<a href="https://github.com/chefexperte/LingoVibe/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT License</a>) | <a href="https://github.com/chefexperte/LingoVibe" target="_blank" rel="noopener noreferrer">GitHub</a></p>
 	</div>
 </footer>

@@ -3,16 +3,13 @@
 	import { base } from '$app/paths';
 	import { getAllLessons } from '$lib/lessons/russian.js';
 	import { lessonProgress, totalXP } from '$lib/stores/lessonStore.js';
+	import { LANGUAGES } from '$lib/utils/constants.js';
 
-	const languageData = {
-		spanish: { name: 'Spanish', flag: '🇪🇸', status: 'coming-soon' },
-		french: { name: 'French', flag: '🇫🇷', status: 'coming-soon' },
-		german: { name: 'German', flag: '🇩🇪', status: 'coming-soon' },
-		italian: { name: 'Italian', flag: '🇮🇹', status: 'coming-soon' },
-		japanese: { name: 'Japanese', flag: '🇯🇵', status: 'coming-soon' },
-		korean: { name: 'Korean', flag: '🇰🇷', status: 'coming-soon' },
-		ru: { name: 'Russian', flag: '🇷🇺', status: 'available' }
-	};
+	// Create language lookup from constants
+	const languageData = LANGUAGES.reduce((acc, lang) => {
+		acc[lang.code] = lang;
+		return acc;
+	}, {});
 
 	$: lang = $page.params.lang;
 	$: currentLang = languageData[lang] || { name: 'Unknown', flag: '🌍', status: 'unknown' };

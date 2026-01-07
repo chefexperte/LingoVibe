@@ -61,6 +61,7 @@ header .container {
 nav {
 	display: flex;
 	gap: 30px;
+	align-items: center;
 }
 
 nav a {
@@ -76,6 +77,15 @@ nav a:hover,
 nav a.active {
 	background-color: var(--primary-color);
 	color: white;
+}
+
+.github-login {
+	margin-left: auto;
+}
+
+.sync-status-nav {
+	display: flex;
+	align-items: center;
 }
 
 /* User Info Styles */

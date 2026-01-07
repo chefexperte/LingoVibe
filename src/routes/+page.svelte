@@ -7,7 +7,8 @@
 		{ code: 'german', name: 'German', flag: '🇩🇪', learners: '12.8M' },
 		{ code: 'italian', name: 'Italian', flag: '🇮🇹', learners: '8.9M' },
 		{ code: 'japanese', name: 'Japanese', flag: '🇯🇵', learners: '18.4M' },
-		{ code: 'korean', name: 'Korean', flag: '🇰🇷', learners: '10.3M' }
+		{ code: 'korean', name: 'Korean', flag: '🇰🇷', learners: '10.3M' },
+		{ code: 'ru', name: 'Russian', flag: '🇷🇺', learners: '14.6M' }
 	];
 
 	const features = [

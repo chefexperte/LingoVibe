@@ -5,6 +5,7 @@ export function entries() {
 		{ lang: 'german' },
 		{ lang: 'italian' },
 		{ lang: 'japanese' },
-		{ lang: 'korean' }
+		{ lang: 'korean' },
+		{ lang: 'ru' }
 	];
 }

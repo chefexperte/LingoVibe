@@ -310,6 +310,8 @@ footer {
 	border-radius: var(--radius);
 	box-shadow: var(--shadow);
 	transition: all 0.2s;
+	text-decoration: none;
+	color: inherit;
 }
 
 .lesson-item.available {

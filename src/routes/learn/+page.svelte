@@ -13,7 +13,8 @@
 		{ code: 'german', name: 'German', flag: '🇩🇪', progress: 0, level: 'Not Started' },
 		{ code: 'italian', name: 'Italian', flag: '🇮🇹', progress: 0, level: 'Not Started' },
 		{ code: 'japanese', name: 'Japanese', flag: '🇯🇵', progress: 0, level: 'Not Started' },
-		{ code: 'korean', name: 'Korean', flag: '🇰🇷', progress: 0, level: 'Not Started' }
+		{ code: 'korean', name: 'Korean', flag: '🇰🇷', progress: 0, level: 'Not Started' },
+		{ code: 'ru', name: 'Russian', flag: '🇷🇺', progress: 5, level: 'Beginner' }
 	];
 </script>
 

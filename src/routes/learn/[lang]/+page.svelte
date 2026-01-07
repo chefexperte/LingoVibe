@@ -1,5 +1,7 @@
 <script>
 	import { page } from '$app/stores';
+	import { base } from '$app/paths';
+	import { getAllLessons } from '$lib/lessons/russian.js';
 
 	const languageData = {
 		spanish: { name: 'Spanish', flag: '🇪🇸' },
@@ -7,13 +9,15 @@
 		german: { name: 'German', flag: '🇩🇪' },
 		italian: { name: 'Italian', flag: '🇮🇹' },
 		japanese: { name: 'Japanese', flag: '🇯🇵' },
-		korean: { name: 'Korean', flag: '🇰🇷' }
+		korean: { name: 'Korean', flag: '🇰🇷' },
+		ru: { name: 'Russian', flag: '🇷🇺' }
 	};
 
 	$: lang = $page.params.lang;
 	$: currentLang = languageData[lang] || { name: 'Unknown', flag: '🌍' };
 
-	const lessons = [
+	// Default lessons for other languages
+	const defaultLessons = [
 		{ id: 1, title: 'Basic Greetings', type: 'vocab', status: 'completed', icon: '✓' },
 		{ id: 2, title: 'Common Phrases', type: 'grammar', status: 'completed', icon: '✓' },
 		{ id: 3, title: 'Numbers 1-10', type: 'vocab', status: 'available', icon: '📚' },
@@ -21,6 +25,9 @@
 		{ id: 5, title: 'Food & Drinks', type: 'vocab', status: 'locked', icon: '🔒' },
 		{ id: 6, title: 'Past Tense', type: 'grammar', status: 'locked', icon: '🔒' }
 	];
+
+	// Get Russian lessons or use defaults
+	$: lessons = lang === 'ru' ? getAllLessons() : defaultLessons;
 </script>
 
 <svelte:head>
@@ -51,20 +58,37 @@
 	<h2>Lesson Path</h2>
 	<div>
 		{#each lessons as lesson}
-			<div class="lesson-item {lesson.status}">
-				<div class="lesson-icon {lesson.type} {lesson.status === 'completed' ? 'completed' : ''}">
-					{lesson.icon}
+			{#if lesson.status === 'available'}
+				<a href="{base}/learn/{lang}/lesson/{lesson.id}" class="lesson-item {lesson.status}">
+					<div class="lesson-icon {lesson.type} {lesson.status === 'completed' ? 'completed' : ''}">
+						{lesson.icon}
+					</div>
+					<div class="lesson-content">
+						<div class="lesson-title">{lesson.title}</div>
+						<div class="lesson-type">{lesson.type === 'vocab' ? 'Vocabulary' : 'Grammar'}</div>
+					</div>
+					{#if lesson.status === 'completed'}
+						<div class="lesson-status">✓</div>
+					{:else if lesson.status === 'locked'}
+						<div class="lesson-status">🔒</div>
+					{/if}
+				</a>
+			{:else}
+				<div class="lesson-item {lesson.status}">
+					<div class="lesson-icon {lesson.type} {lesson.status === 'completed' ? 'completed' : ''}">
+						{lesson.icon}
+					</div>
+					<div class="lesson-content">
+						<div class="lesson-title">{lesson.title}</div>
+						<div class="lesson-type">{lesson.type === 'vocab' ? 'Vocabulary' : 'Grammar'}</div>
+					</div>
+					{#if lesson.status === 'completed'}
+						<div class="lesson-status">✓</div>
+					{:else if lesson.status === 'locked'}
+						<div class="lesson-status">🔒</div>
+					{/if}
 				</div>
-				<div class="lesson-content">
-					<div class="lesson-title">{lesson.title}</div>
-					<div class="lesson-type">{lesson.type === 'vocab' ? 'Vocabulary' : 'Grammar'}</div>
-				</div>
-				{#if lesson.status === 'completed'}
-					<div class="lesson-status">✓</div>
-				{:else if lesson.status === 'locked'}
-					<div class="lesson-status">🔒</div>
-				{/if}
-			</div>
+			{/if}
 		{/each}
 	</div>
 </div>

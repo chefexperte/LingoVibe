@@ -1,22 +1,33 @@
 <script>
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
+	import { welcomeScreenSeen, user } from '$lib/stores/userStore.js';
+	import { totalXP, lessonProgress, streak } from '$lib/stores/lessonStore.js';
+
+	let shouldShowWelcome = false;
+
+	// Check if user should see welcome screen
+	onMount(() => {
+		welcomeScreenSeen.subscribe(seen => {
+			if (!seen) {
+				shouldShowWelcome = true;
+				goto(`${base}/welcome`);
+			}
+		})();
+	});
 
 	const languages = [
-		{ code: 'spanish', name: 'Spanish', flag: '🇪🇸', learners: '23.5M' },
-		{ code: 'french', name: 'French', flag: '🇫🇷', learners: '15.2M' },
-		{ code: 'german', name: 'German', flag: '🇩🇪', learners: '12.8M' },
-		{ code: 'italian', name: 'Italian', flag: '🇮🇹', learners: '8.9M' },
-		{ code: 'japanese', name: 'Japanese', flag: '🇯🇵', learners: '18.4M' },
-		{ code: 'korean', name: 'Korean', flag: '🇰🇷', learners: '10.3M' },
-		{ code: 'ru', name: 'Russian', flag: '🇷🇺', learners: '14.6M' }
+		{ code: 'ru', name: 'Russian', flag: '🇷🇺', status: 'available', description: 'Full course available' },
+		{ code: 'spanish', name: 'Spanish', flag: '🇪🇸', status: 'coming-soon', description: 'Coming Soon' },
+		{ code: 'french', name: 'French', flag: '🇫🇷', status: 'coming-soon', description: 'Coming Soon' },
+		{ code: 'german', name: 'German', flag: '🇩🇪', status: 'coming-soon', description: 'Coming Soon' },
+		{ code: 'italian', name: 'Italian', flag: '🇮🇹', status: 'coming-soon', description: 'Coming Soon' },
+		{ code: 'japanese', name: 'Japanese', flag: '🇯🇵', status: 'coming-soon', description: 'Coming Soon' },
+		{ code: 'korean', name: 'Korean', flag: '🇰🇷', status: 'coming-soon', description: 'Coming Soon' }
 	];
 
-	const features = [
-		{ icon: '🎮', title: 'Gamified Learning', description: 'Earn XP, unlock achievements, and track your progress' },
-		{ icon: '📖', title: 'Wiktionary Powered', description: 'Access comprehensive language data from Wiktionary' },
-		{ icon: '❓', title: 'Interactive Quizzes', description: 'Test your knowledge with engaging quizzes' },
-		{ icon: '📊', title: 'Progress Tracking', description: 'Monitor your learning journey with detailed statistics' }
-	];
+	$: russianProgress = $lessonProgress['ru']?.length || 0;
 </script>
 
 <svelte:head>
@@ -24,33 +35,61 @@
 </svelte:head>
 
 <div class="container">
-	<div class="hero">
-		<h1>Learn Languages with Joy</h1>
-		<p>Master new languages through gamified lessons and interactive practice</p>
-	</div>
+	{#if $user}
+		<div class="welcome-back">
+			<h1>Welcome back, {$user.username}! 👋</h1>
+			<p>Keep up the great work learning languages!</p>
+		</div>
 
-	<div class="features-grid">
-		{#each features as feature}
-			<div class="feature-item">
-				<div class="feature-icon">{feature.icon}</div>
-				<h3>{feature.title}</h3>
-				<p>{feature.description}</p>
+		<div class="stats-grid">
+			<div class="stat-card">
+				<div class="icon">⭐</div>
+				<div class="value">{$totalXP}</div>
+				<div class="label">Total XP</div>
 			</div>
-		{/each}
-	</div>
+			<div class="stat-card">
+				<div class="icon">📚</div>
+				<div class="value">{russianProgress}</div>
+				<div class="label">Lessons Completed</div>
+			</div>
+			<div class="stat-card">
+				<div class="icon">🔥</div>
+				<div class="value">{$streak}</div>
+				<div class="label">Day Streak</div>
+			</div>
+		</div>
+	{:else}
+		<div class="hero-compact">
+			<h1>Start Your Language Journey</h1>
+			<p>Choose a language below to begin learning</p>
+		</div>
+	{/if}
 
-	<h2>Choose Your Language</h2>
+	<h2>Available Courses</h2>
 	<div class="grid grid-3">
 		{#each languages as lang}
-			<a href="{base}/learn/{lang.code}" class="card card-clickable">
-				<div class="language-card">
-					<div class="language-flag">{lang.flag}</div>
-					<div class="language-info">
-						<div class="language-name">{lang.name}</div>
-						<div class="language-learners">{lang.learners} learners</div>
+			{#if lang.status === 'available'}
+				<a href="{base}/learn/{lang.code}" class="card card-clickable language-card-container">
+					<div class="language-card">
+						<div class="language-flag">{lang.flag}</div>
+						<div class="language-info">
+							<div class="language-name">{lang.name}</div>
+							<span class="badge badge-success">{lang.description}</span>
+						</div>
+					</div>
+				</a>
+			{:else}
+				<div class="card language-card-container locked">
+					<div class="language-card">
+						<div class="language-flag locked-flag">{lang.flag}</div>
+						<div class="language-info">
+							<div class="language-name">{lang.name}</div>
+							<span class="badge badge-gray">{lang.description}</span>
+						</div>
+						<div class="lock-icon">🔒</div>
 					</div>
 				</div>
-			</a>
+			{/if}
 		{/each}
 	</div>
 </div>

@@ -78,6 +78,96 @@ nav a.active {
 	color: white;
 }
 
+/* User Info Styles */
+.user-info {
+	position: relative;
+}
+
+.user-button {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 16px;
+	background: var(--card-bg);
+	border: 2px solid var(--border-color);
+	border-radius: 8px;
+	font-weight: 600;
+	color: var(--text-color);
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.user-button:hover {
+	border-color: var(--primary-color);
+	background: #f0ffe0;
+}
+
+.user-icon {
+	font-size: 18px;
+}
+
+.username {
+	font-size: 14px;
+}
+
+.user-xp {
+	font-size: 12px;
+	background: var(--primary-color);
+	color: white;
+	padding: 2px 8px;
+	border-radius: 6px;
+}
+
+.user-menu {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	margin-top: 8px;
+	background: var(--card-bg);
+	border-radius: 8px;
+	box-shadow: var(--shadow-hover);
+	min-width: 200px;
+	z-index: 1000;
+	border: 1px solid var(--border-color);
+}
+
+.user-menu-item {
+	display: block;
+	width: 100%;
+	padding: 12px 16px;
+	border: none;
+	background: none;
+	text-align: left;
+	cursor: pointer;
+	transition: background-color 0.2s;
+	font-size: 14px;
+}
+
+.user-menu-item:hover {
+	background: var(--bg-color);
+}
+
+.user-stats {
+	border-bottom: 1px solid var(--border-color);
+	font-size: 12px;
+	color: var(--text-secondary);
+	cursor: default;
+}
+
+.user-stats:hover {
+	background: none;
+}
+
+.logout-btn {
+	color: var(--danger-color);
+	font-weight: 600;
+}
+
+.logout-btn:hover {
+	background: #ffe0e0;
+}
+
+
 /* Footer Styles */
 footer {
 	background: var(--card-bg);
@@ -107,6 +197,72 @@ footer {
 	font-size: 20px;
 	opacity: 0.95;
 }
+
+/* Hero Compact for logged-in users */
+.hero-compact {
+	text-align: center;
+	padding: 40px 20px;
+	margin-bottom: 30px;
+}
+
+.hero-compact h1 {
+	font-size: 36px;
+	margin-bottom: 10px;
+	color: var(--text-color);
+}
+
+.hero-compact p {
+	font-size: 18px;
+	color: var(--text-secondary);
+}
+
+/* Welcome Back Section */
+.welcome-back {
+	text-align: center;
+	padding: 30px 20px;
+	background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+	color: white;
+	border-radius: var(--radius);
+	margin-bottom: 30px;
+}
+
+.welcome-back h1 {
+	font-size: 32px;
+	margin-bottom: 8px;
+}
+
+.welcome-back p {
+	font-size: 16px;
+	opacity: 0.9;
+}
+
+/* Locked Language Card */
+.language-card-container.locked {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.language-card-container.locked:hover {
+	transform: none;
+	box-shadow: var(--shadow);
+}
+
+.locked-flag {
+	filter: grayscale(100%);
+	opacity: 0.5;
+}
+
+.lock-icon {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	font-size: 24px;
+}
+
+.language-card-container {
+	position: relative;
+}
+
 
 /* Card Styles */
 .card {

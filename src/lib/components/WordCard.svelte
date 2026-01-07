@@ -3,6 +3,8 @@
 	 * Card component for displaying Russian words with Wiktionary data
 	 * @component
 	 */
+	import WiktionaryAttribution from './WiktionaryAttribution.svelte';
+	
 	export let wordData = null;
 	export let example = '';
 	export let loading = false;
@@ -18,7 +20,10 @@
 		</div>
 	{:else if hasData}
 		<div class="word-header">
-			<div class="word-russian">{wordData.word}</div>
+			<div class="word-russian">
+				{wordData.word}
+				<WiktionaryAttribution />
+			</div>
 			<div class="word-transliteration">{wordData.transliteration}</div>
 		</div>
 		<div class="word-translation">
@@ -77,6 +82,9 @@
 		color: var(--text-color);
 		font-family: 'Times New Roman', serif;
 		margin-bottom: 5px;
+		display: flex;
+		align-items: center;
+		gap: 8px;
 	}
 
 	.word-transliteration {

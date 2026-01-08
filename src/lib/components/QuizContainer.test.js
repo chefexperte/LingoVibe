@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { get } from 'svelte/store';
 import { render, fireEvent } from '@testing-library/svelte';
 import QuizContainer from './QuizContainer.svelte';
 import { quizState } from '$lib/stores/quizStore.js';
@@ -110,6 +111,3 @@ describe('QuizContainer', () => {
 		expect(state.currentQuestionIndex).toBeLessThan(maxQuestions);
 	});
 });
-
-// Import get from svelte/store for the last test
-import { get } from 'svelte/store';

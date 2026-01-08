@@ -16,6 +16,7 @@
 		calculateQuizXP
 	} from '$lib/stores/quizStore.js';
 	import { addXP } from '$lib/stores/lessonStore.js';
+	import { trackWord, recordPractice } from '$lib/stores/vocabularyStore.js';
 	import CaseFormationQuiz from './CaseFormationQuiz.svelte';
 	import CaseIdentificationQuiz from './CaseIdentificationQuiz.svelte';
 	import SentenceCompletionQuiz from './SentenceCompletionQuiz.svelte';
@@ -58,6 +59,18 @@
 
 			currentQuiz = quiz;
 			setCurrentQuiz(quiz);
+			
+			// Track word when encountered
+			trackWord({
+				word: quiz.word,
+				translation: quiz.wordTranslation,
+				type: 'noun',
+				metadata: {
+					gender: quiz.declension?.gender,
+					animacy: quiz.declension?.animacy,
+					difficulty: quiz.difficulty
+				}
+			});
 		} catch (err) {
 			console.error('Error loading quiz:', err);
 			error = 'Failed to load quiz. Please try again.';
@@ -68,6 +81,10 @@
 
 	function handleSubmit(correct, userAnswer) {
 		submitAnswer(correct, userAnswer);
+		
+		// Record practice attempt
+		const form = currentQuiz.targetCase || null;
+		recordPractice(currentQuiz.word, correct, form);
 	}
 
 	function handleNext() {

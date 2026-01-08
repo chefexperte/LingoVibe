@@ -6,6 +6,7 @@
 	import { totalXP } from '$lib/stores/lessonStore.js';
 	import { isGithubAuthenticated } from '$lib/stores/syncStore.js';
 	import { initAchievementStore } from '$lib/stores/achievementStore.js';
+	import { initVocabularyStore } from '$lib/stores/vocabularyStore.js';
 	import LoginButton from '$lib/components/LoginButton.svelte';
 	import UserProfile from '$lib/components/UserProfile.svelte';
 	import SyncStatus from '$lib/components/SyncStatus.svelte';
@@ -20,6 +21,7 @@
 	
 	onMount(() => {
 		initAchievementStore();
+		initVocabularyStore();
 	});
 	
 	function handleLogout() {
@@ -55,6 +57,7 @@
 			<a href="{base}/" class:active={$page.url.pathname === `${base}/`}>Home</a>
 			<a href="{base}/courses" class:active={$page.url.pathname.startsWith(`${base}/courses`)}>Courses</a>
 			<a href="{base}/practice" class:active={$page.url.pathname === `${base}/practice`}>Practice</a>
+			<a href="{base}/vocabulary" class:active={$page.url.pathname === `${base}/vocabulary`}>Vocabulary</a>
 			<a href="{base}/achievements" class:active={$page.url.pathname === `${base}/achievements`}>Achievements</a>
 			
 			{#if $isGithubAuthenticated}

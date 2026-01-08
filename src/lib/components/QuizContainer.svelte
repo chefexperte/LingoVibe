@@ -43,7 +43,14 @@
 		error = null;
 
 		try {
-			// Check if quiz is complete
+			// Defensive check: ensure we haven't exceeded question limit
+			// Check both currentQuestionIndex and answers.length to prevent edge cases
+			if (state.answers.length >= state.totalQuestions) {
+				showResultsScreen();
+				return;
+			}
+			
+			// Check if quiz is complete (backup check)
 			if (state.currentQuestionIndex >= state.totalQuestions) {
 				showResultsScreen();
 				return;

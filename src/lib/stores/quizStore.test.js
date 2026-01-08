@@ -118,7 +118,7 @@ describe('quizStore', () => {
 	});
 
 	describe('quizProgress', () => {
-		it('should calculate progress percentage', () => {
+		it('should calculate progress percentage based on answers submitted', () => {
 			startQuiz({ questionCount: 10 });
 			
 			// Answer 3 questions
@@ -130,6 +130,17 @@ describe('quizStore', () => {
 			
 			const progress = get(quizProgress);
 			expect(progress).toBe(30); // 3/10 * 100
+		});
+
+		it('should show correct progress for first question', () => {
+			startQuiz({ questionCount: 5 });
+			
+			// After answering first question
+			setCurrentQuiz({ word: 'word1' });
+			submitAnswer(true);
+			
+			const progress = get(quizProgress);
+			expect(progress).toBe(20); // 1/5 * 100 (one answer submitted)
 		});
 
 		it('should return 0 when quiz is not active', () => {
@@ -175,6 +186,23 @@ describe('quizStore', () => {
 			expect(history.length).toBe(1);
 			expect(history[0].score).toBe(3);
 			expect(history[0].totalQuestions).toBe(5);
+		});
+
+		it('should use totalQuestions from settings, not answers.length', () => {
+			startQuiz({ questionCount: 5 });
+			
+			// Simulate 6 answers (edge case bug)
+			for (let i = 0; i < 6; i++) {
+				setCurrentQuiz({ word: `word${i}` });
+				submitAnswer(i < 3);
+				nextQuestion();
+			}
+			
+			const result = endQuiz();
+			
+			// Should use settings.questionCount (5), not answers.length (6)
+			expect(result.totalQuestions).toBe(5);
+			expect(result.answers.length).toBe(6); // We did submit 6 answers
 		});
 
 		it('should reset quiz state', () => {

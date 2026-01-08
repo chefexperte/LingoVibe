@@ -64,7 +64,8 @@ export const quizHistory = createQuizHistory();
  */
 export const quizProgress = derived(quizState, $state => {
 	if (!$state.isActive) return 0;
-	return Math.round(($state.currentQuestionIndex / $state.totalQuestions) * 100);
+	// Progress based on number of answers submitted (completed questions)
+	return Math.round(($state.answers.length / $state.totalQuestions) * 100);
 });
 
 /**
@@ -149,7 +150,7 @@ export function endQuiz() {
 	const result = {
 		date: new Date().toISOString(),
 		score: state.score,
-		totalQuestions: state.answers.length,
+		totalQuestions: state.totalQuestions, // Use totalQuestions from settings, not answers.length
 		accuracy: state.answers.length > 0 
 			? Math.round((state.score / state.answers.length) * 100) 
 			: 0,

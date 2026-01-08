@@ -44,13 +44,15 @@
 
 		try {
 			// Defensive check: ensure we haven't exceeded question limit
-			// Check both currentQuestionIndex and answers.length to prevent edge cases
+			// We check both answers.length and currentQuestionIndex to prevent edge cases:
+			// - answers.length: prevents loading if we've already recorded enough answers
+			// - currentQuestionIndex: prevents loading if the index counter has advanced too far
+			// This dual check guards against race conditions or state inconsistencies
 			if (state.answers.length >= state.totalQuestions) {
 				showResultsScreen();
 				return;
 			}
 			
-			// Check if quiz is complete (backup check)
 			if (state.currentQuestionIndex >= state.totalQuestions) {
 				showResultsScreen();
 				return;

@@ -60,7 +60,7 @@
 				<div class="word-translation">({quiz.wordTranslation})</div>
 			</div>
 			<a 
-				href="https://en.wiktionary.org/wiki/{quiz.word}#Russian"
+				href="https://en.wiktionary.org/wiki/{encodeURIComponent(quiz.word)}#Russian"
 				target="_blank"
 				rel="noopener noreferrer"
 				class="wiktionary-link"

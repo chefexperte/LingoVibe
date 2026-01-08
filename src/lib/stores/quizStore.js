@@ -63,7 +63,7 @@ export const quizHistory = createQuizHistory();
  * Derived store for quiz progress
  */
 export const quizProgress = derived(quizState, $state => {
-	if (!$state.isActive) return 0;
+	if (!$state.isActive || $state.totalQuestions === 0) return 0;
 	// Progress based on number of answers submitted (completed questions)
 	return Math.round(($state.answers.length / $state.totalQuestions) * 100);
 });

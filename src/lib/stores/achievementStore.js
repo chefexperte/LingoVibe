@@ -3,7 +3,6 @@ import { browser } from '$app/environment';
 import { ACHIEVEMENTS } from '$lib/utils/achievements.js';
 import { STORAGE_KEYS } from '$lib/utils/constants.js';
 import { totalXP, streak } from './lessonStore.js';
-import { quizHistory } from './quizStore.js';
 
 /**
  * Unlocked achievement IDs
@@ -37,7 +36,6 @@ export function initAchievementStore() {
 function getUserStats() {
 	const $totalXP = get(totalXP);
 	const $streak = get(streak);
-	const $quizHistory = get(quizHistory);
 
 	// Count lessons from localStorage
 	let lessonsCompleted = 0;
@@ -48,9 +46,16 @@ function getUserStats() {
 		console.error('Error reading lesson progress:', e);
 	}
 
-	// Count perfect quizzes
-	const perfectQuizzes = $quizHistory.filter(q => q.accuracy === 100).length;
-	const quizzesCompleted = $quizHistory.length;
+	// Count perfect quizzes and total quizzes
+	let perfectQuizzes = 0;
+	let quizzesCompleted = 0;
+	try {
+		const quizHistory = JSON.parse(localStorage.getItem(STORAGE_KEYS.QUIZ_HISTORY) || '[]');
+		perfectQuizzes = quizHistory.filter(q => q.accuracy === 100).length;
+		quizzesCompleted = quizHistory.length;
+	} catch (e) {
+		console.error('Error reading quiz history:', e);
+	}
 
 	return {
 		totalXP: $totalXP,

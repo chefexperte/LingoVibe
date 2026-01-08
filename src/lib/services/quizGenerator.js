@@ -9,6 +9,20 @@ import { sentenceTemplates, getRandomTemplate, getTemplatesByDifficulty, russian
 import { areWordsEquivalent } from './wiktionaryParser.js';
 
 /**
+ * Fisher-Yates shuffle algorithm for proper randomization
+ * @param {Array} array - Array to shuffle
+ * @returns {Array} Shuffled array
+ */
+function shuffleArray(array) {
+	const shuffled = [...array];
+	for (let i = shuffled.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+	}
+	return shuffled;
+}
+
+/**
  * Quiz types
  */
 export const QUIZ_TYPES = {
@@ -142,7 +156,7 @@ async function generateCaseFormationMCQuiz(difficulty, excludeWords = [], select
 		}
 
 		// Shuffle and take 3 wrong answers
-		const shuffledWrong = wrongAnswers.sort(() => Math.random() - 0.5).slice(0, 3);
+		const shuffledWrong = shuffleArray(wrongAnswers).slice(0, 3);
 		
 		// Create options
 		const options = [
@@ -151,7 +165,7 @@ async function generateCaseFormationMCQuiz(difficulty, excludeWords = [], select
 		];
 
 		// Shuffle options
-		options.sort(() => Math.random() - 0.5);
+		const shuffledOptions = shuffleArray(options);
 
 		return {
 			type: QUIZ_TYPES.CASE_FORMATION_MC,
@@ -160,7 +174,7 @@ async function generateCaseFormationMCQuiz(difficulty, excludeWords = [], select
 			word: nounData.word,
 			wordTranslation: nounData.translation,
 			targetCase: targetCase,
-			options: options,
+			options: shuffledOptions,
 			correctAnswer: correctAnswer,
 			declension: declension,
 			fromWiktionary: true,
@@ -301,10 +315,9 @@ async function generateSentenceCompletionMCQuiz(difficulty, excludeWords = [], s
 		// Generate wrong answers from other cases
 		const allCases = ['nominative', 'genitive', 'dative', 'accusative', 'instrumental', 'prepositional'];
 		const wrongCases = allCases.filter(c => c !== template.requiredCase);
-		const wrongAnswers = wrongCases
+		const wrongAnswers = shuffleArray(wrongCases)
 			.map(c => declension.declension.singular[c])
 			.filter(ans => ans !== correctAnswer)
-			.sort(() => Math.random() - 0.5)
 			.slice(0, 3);
 
 		// Create options array with correct and wrong answers
@@ -314,7 +327,7 @@ async function generateSentenceCompletionMCQuiz(difficulty, excludeWords = [], s
 		];
 
 		// Shuffle options
-		options.sort(() => Math.random() - 0.5);
+		const shuffledOptions = shuffleArray(options);
 
 		return {
 			type: QUIZ_TYPES.SENTENCE_COMPLETION_MC,
@@ -326,7 +339,7 @@ async function generateSentenceCompletionMCQuiz(difficulty, excludeWords = [], s
 			wordTranslation: nounData.translation,
 			requiredCase: template.requiredCase,
 			correctAnswer: correctAnswer,
-			options: options,
+			options: shuffledOptions,
 			declension: declension,
 			explanation: template.explanation,
 			fromWiktionary: true,

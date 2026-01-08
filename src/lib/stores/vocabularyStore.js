@@ -7,6 +7,9 @@ import { writable, derived, get } from 'svelte/store';
 import { browser } from '$app/environment';
 import { STORAGE_KEYS } from '$lib/utils/constants.js';
 
+// Mastery threshold: number of correct answers in a row needed to master a word
+const MASTERY_THRESHOLD = 10;
+
 /**
  * Vocabulary data structure:
  * {
@@ -160,17 +163,18 @@ export function recordPractice(word, correct, form = null) {
 		if (correct) {
 			wordData.proficiency.correct += 1;
 			
-			// Update mastery progress (max 10)
-			if (wordData.proficiency.masteryProgress < 10) {
+			// Update mastery progress (max MASTERY_THRESHOLD)
+			if (wordData.proficiency.masteryProgress < MASTERY_THRESHOLD) {
 				wordData.proficiency.masteryProgress += 1;
 			}
 		} else {
-			// Wrong answer resets mastery progress
+			// Wrong answer resets mastery progress (but doesn't affect already mastered status)
 			wordData.proficiency.masteryProgress = 0;
 		}
 		
-		// Check if mastered (10 correct in a row)
-		if (wordData.proficiency.masteryProgress >= 10) {
+		// Check if mastered (MASTERY_THRESHOLD correct in a row)
+		// Note: Once mastered, status persists even if subsequent answers are wrong
+		if (wordData.proficiency.masteryProgress >= MASTERY_THRESHOLD) {
 			wordData.proficiency.isMastered = true;
 		}
 		
@@ -196,14 +200,17 @@ export function recordPractice(word, correct, form = null) {
 			formData.total += 1;
 			if (correct) {
 				formData.correct += 1;
-				if (formData.masteryProgress < 10) {
+				if (formData.masteryProgress < MASTERY_THRESHOLD) {
 					formData.masteryProgress += 1;
 				}
 			} else {
+				// Wrong answer resets mastery progress (but doesn't affect already mastered status)
 				formData.masteryProgress = 0;
 			}
 			
-			if (formData.masteryProgress >= 10) {
+			// Check if mastered (MASTERY_THRESHOLD correct in a row)
+			// Note: Once mastered, status persists even if subsequent answers are wrong
+			if (formData.masteryProgress >= MASTERY_THRESHOLD) {
 				formData.isMastered = true;
 			}
 			

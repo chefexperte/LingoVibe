@@ -224,62 +224,6 @@
 		font-weight: 500;
 	}
 
-	.difficulty-options {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
-
-	.difficulty-option {
-		display: flex;
-		align-items: center;
-		gap: 15px;
-		padding: 15px;
-		background: var(--bg-color);
-		border: 2px solid var(--border-color);
-		border-radius: 8px;
-		cursor: pointer;
-		transition: all 0.2s;
-		text-align: left;
-	}
-
-	.difficulty-option:hover {
-		border-color: var(--primary-color);
-		transform: translateY(-2px);
-		box-shadow: var(--shadow);
-	}
-
-	.difficulty-option.selected {
-		border-color: var(--primary-color);
-		background: #f0ffe0;
-		box-shadow: var(--shadow);
-	}
-
-	.difficulty-icon {
-		font-size: 24px;
-		flex-shrink: 0;
-	}
-
-	.difficulty-content {
-		flex: 1;
-	}
-
-	.difficulty-label {
-		font-weight: 600;
-		color: var(--text-color);
-		margin-bottom: 4px;
-		font-size: 15px;
-	}
-
-	.difficulty-description {
-		font-size: 13px;
-		color: var(--text-secondary);
-	}
-
-	.difficulty-option.selected .difficulty-label {
-		color: var(--primary-color);
-	}
-
 	.question-count-options {
 		display: flex;
 		gap: 12px;
@@ -413,25 +357,6 @@
 	@media (max-width: 768px) {
 		.quiz-settings {
 			padding: 20px;
-		}
-
-		.quiz-type-option,
-		.difficulty-option {
-			padding: 10px 12px;
-		}
-
-		.option-icon,
-		.difficulty-icon {
-			font-size: 18px;
-		}
-
-		.option-label,
-		.difficulty-label {
-			font-size: 13px;
-		}
-
-		.difficulty-description {
-			font-size: 11px;
 		}
 
 		.count-option {

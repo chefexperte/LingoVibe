@@ -1,5 +1,6 @@
 import { writable, get } from 'svelte/store';
 import { browser } from '$app/environment';
+import { STORAGE_KEYS } from '$lib/utils/constants.js';
 
 // Import sync trigger (lazy to avoid circular dependency)
 let triggerAutoSync;
@@ -16,7 +17,7 @@ function getInitialProgress() {
 	if (!browser) return {};
 	
 	try {
-		const stored = localStorage.getItem('lessonProgress');
+		const stored = localStorage.getItem(STORAGE_KEYS.LESSON_PROGRESS);
 		return stored ? JSON.parse(stored) : {};
 	} catch (e) {
 		console.error('Error loading lesson progress:', e);
@@ -31,7 +32,7 @@ function getInitialXP() {
 	if (!browser) return 0;
 	
 	try {
-		const stored = localStorage.getItem('totalXP');
+		const stored = localStorage.getItem(STORAGE_KEYS.TOTAL_XP);
 		return stored ? parseInt(stored, 10) : 0;
 	} catch (e) {
 		console.error('Error loading XP:', e);
@@ -46,7 +47,7 @@ function getInitialStreak() {
 	if (!browser) return 0;
 	
 	try {
-		const stored = localStorage.getItem('streak');
+		const stored = localStorage.getItem(STORAGE_KEYS.STREAK);
 		return stored ? parseInt(stored, 10) : 0;
 	} catch (e) {
 		console.error('Error loading streak:', e);
@@ -61,7 +62,7 @@ function getLastActiveDate() {
 	if (!browser) return null;
 	
 	try {
-		const stored = localStorage.getItem('lastActiveDate');
+		const stored = localStorage.getItem(STORAGE_KEYS.LAST_ACTIVE_DATE);
 		return stored || null;
 	} catch (e) {
 		console.error('Error loading last active date:', e);
@@ -96,7 +97,7 @@ export const lastActiveDate = writable(getLastActiveDate());
 if (browser) {
 	lessonProgress.subscribe(value => {
 		try {
-			localStorage.setItem('lessonProgress', JSON.stringify(value));
+			localStorage.setItem(STORAGE_KEYS.LESSON_PROGRESS, JSON.stringify(value));
 			// Trigger auto-sync when progress changes
 			if (triggerAutoSync) {
 				triggerAutoSync();
@@ -108,7 +109,7 @@ if (browser) {
 
 	totalXP.subscribe(value => {
 		try {
-			localStorage.setItem('totalXP', value.toString());
+			localStorage.setItem(STORAGE_KEYS.TOTAL_XP, value.toString());
 			// Trigger auto-sync when XP changes
 			if (triggerAutoSync) {
 				triggerAutoSync();
@@ -120,7 +121,7 @@ if (browser) {
 
 	streak.subscribe(value => {
 		try {
-			localStorage.setItem('streak', value.toString());
+			localStorage.setItem(STORAGE_KEYS.STREAK, value.toString());
 			// Trigger auto-sync when streak changes
 			if (triggerAutoSync) {
 				triggerAutoSync();
@@ -133,9 +134,9 @@ if (browser) {
 	lastActiveDate.subscribe(value => {
 		try {
 			if (value) {
-				localStorage.setItem('lastActiveDate', value);
+				localStorage.setItem(STORAGE_KEYS.LAST_ACTIVE_DATE, value);
 			} else {
-				localStorage.removeItem('lastActiveDate');
+				localStorage.removeItem(STORAGE_KEYS.LAST_ACTIVE_DATE);
 			}
 		} catch (e) {
 			console.error('Error saving last active date:', e);
@@ -161,44 +162,64 @@ export function completeLesson(lang, lessonId, xpReward = 0) {
 	});
 
 	if (xpReward > 0) {
-		totalXP.update(xp => xp + xpReward);
+		addXP(xpReward);
 	}
 
 	// Update streak
 	updateStreak();
+	
+	// Check for achievements
+	import('./achievementStore.js').then(({ checkAchievements }) => {
+		checkAchievements();
+	});
 }
 
 /**
- * Update streak based on current date
+ * Update streak based on last active date
+ * Called whenever user completes a lesson or quiz
  */
-function updateStreak() {
+export function updateStreak() {
 	if (!browser) return;
 
-	const today = new Date().toISOString().split('T')[0];
-	const lastDate = get(lastActiveDate);
-	const currentStreak = get(streak);
+	const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+	const last = get(lastActiveDate);
 
-	if (!lastDate) {
-		// First time
-		streak.set(1);
-		lastActiveDate.set(today);
-	} else if (lastDate === today) {
+	if (last === today) {
 		// Already active today, no change
 		return;
-	} else {
-		// Check if it's consecutive
-		const yesterday = new Date();
-		yesterday.setDate(yesterday.getDate() - 1);
-		const yesterdayStr = yesterday.toISOString().split('T')[0];
+	}
 
-		if (lastDate === yesterdayStr) {
-			// Consecutive day
-			streak.update(s => s + 1);
-		} else {
-			// Streak broken
-			streak.set(1);
-		}
-		lastActiveDate.set(today);
+	const yesterday = new Date();
+	yesterday.setDate(yesterday.getDate() - 1);
+	const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+	let currentStreak = get(streak);
+
+	if (last === yesterdayStr) {
+		// Active yesterday, increment streak
+		currentStreak += 1;
+	} else if (last === null || last === '') {
+		// First time or no previous activity
+		currentStreak = 1;
+	} else {
+		// Missed a day, reset streak
+		currentStreak = 1;
+	}
+
+	streak.set(currentStreak);
+	lastActiveDate.set(today);
+
+	// Persist
+	try {
+		localStorage.setItem(STORAGE_KEYS.STREAK, currentStreak.toString());
+		localStorage.setItem(STORAGE_KEYS.LAST_ACTIVE_DATE, today);
+	} catch (e) {
+		console.error('Error saving streak:', e);
+	}
+
+	// Trigger auto-sync if authenticated
+	if (triggerAutoSync) {
+		triggerAutoSync();
 	}
 }
 
@@ -224,14 +245,29 @@ export function getCompletedCount(lang) {
 }
 
 /**
- * Add XP to the total
- * @param {number} amount - Amount of XP to add
+ * Add XP to user's total
+ * @param {number} amount - XP amount to add
  */
 export function addXP(amount) {
-	if (amount > 0) {
-		totalXP.update(xp => xp + amount);
-		updateStreak();
-	}
+	if (!browser || typeof amount !== 'number' || amount <= 0) return;
+
+	totalXP.update(current => {
+		const newTotal = current + amount;
+		
+		// Persist to localStorage
+		try {
+			localStorage.setItem(STORAGE_KEYS.TOTAL_XP, newTotal.toString());
+		} catch (e) {
+			console.error('Error saving XP:', e);
+		}
+
+		// Trigger sync
+		if (triggerAutoSync) {
+			triggerAutoSync();
+		}
+
+		return newTotal;
+	});
 }
 
 /**
@@ -243,9 +279,9 @@ export function resetProgress() {
 	streak.set(0);
 	lastActiveDate.set(null);
 	if (browser) {
-		localStorage.removeItem('lessonProgress');
-		localStorage.removeItem('totalXP');
-		localStorage.removeItem('streak');
-		localStorage.removeItem('lastActiveDate');
+		localStorage.removeItem(STORAGE_KEYS.LESSON_PROGRESS);
+		localStorage.removeItem(STORAGE_KEYS.TOTAL_XP);
+		localStorage.removeItem(STORAGE_KEYS.STREAK);
+		localStorage.removeItem(STORAGE_KEYS.LAST_ACTIVE_DATE);
 	}
 }

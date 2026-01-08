@@ -6,6 +6,7 @@
 	import { totalXP, lessonProgress, streak } from '$lib/stores/lessonStore.js';
 	import { quizHistory } from '$lib/stores/quizStore.js';
 	import { recentAchievements } from '$lib/stores/achievementStore.js';
+	import { vocabularyStats, masteredWords } from '$lib/stores/vocabularyStore.js';
 	import { getAllLessons } from '$lib/lessons/russian.js';
 	import AchievementCard from '$lib/components/AchievementCard.svelte';
 
@@ -73,6 +74,12 @@
 			<div class="stat-icon">📚</div>
 			<div class="stat-value">{russianProgress}</div>
 			<div class="stat-label">Lessons Completed</div>
+		</div>
+		<div class="stat-card vocab-card">
+			<div class="stat-icon">📖</div>
+			<div class="stat-value">{$masteredWords.length}</div>
+			<div class="stat-label">Words Mastered</div>
+			<div class="stat-hint">{$vocabularyStats.total} total</div>
 		</div>
 	</div>
 

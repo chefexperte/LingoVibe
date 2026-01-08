@@ -56,5 +56,6 @@ export const STORAGE_KEYS = {
 	LAST_ACTIVE_DATE: 'lastActiveDate',
 	WELCOME_SCREEN_SEEN: 'welcomeScreenSeen',
 	QUIZ_HISTORY: 'quizHistory',
-	ACHIEVEMENTS: 'achievements'
+	ACHIEVEMENTS: 'achievements',
+	VOCABULARY: 'vocabulary'
 };

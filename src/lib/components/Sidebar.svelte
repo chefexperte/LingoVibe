@@ -14,6 +14,7 @@
 		{ path: '/', label: 'Home', icon: '🏠' },
 		{ path: '/courses', label: 'Courses', icon: '📚' },
 		{ path: '/practice', label: 'Practice', icon: '✍️' },
+		{ path: '/vocabulary', label: 'Vocabulary', icon: '📖' },
 		{ path: '/achievements', label: 'Achievements', icon: '🏆' },
 		{ path: '/settings', label: 'Settings', icon: '⚙️' }
 	];

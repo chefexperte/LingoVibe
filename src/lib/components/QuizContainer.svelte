@@ -20,6 +20,7 @@
 	import CaseFormationQuiz from './CaseFormationQuiz.svelte';
 	import CaseIdentificationQuiz from './CaseIdentificationQuiz.svelte';
 	import SentenceCompletionQuiz from './SentenceCompletionQuiz.svelte';
+	import SentenceCompletionMCQuiz from './SentenceCompletionMCQuiz.svelte';
 
 	export let onComplete = () => {};
 
@@ -79,7 +80,8 @@
 				metadata: {
 					gender: quiz.declension?.gender,
 					animacy: quiz.declension?.animacy,
-					difficulty: quiz.difficulty
+					difficulty: quiz.difficulty,
+					frequency: quiz.frequency || 5
 				}
 			});
 		} catch (err) {
@@ -133,6 +135,8 @@
 				return CaseIdentificationQuiz;
 			case QUIZ_TYPES.SENTENCE_COMPLETION:
 				return SentenceCompletionQuiz;
+			case QUIZ_TYPES.SENTENCE_COMPLETION_MC:
+				return SentenceCompletionMCQuiz;
 			default:
 				return CaseFormationQuiz;
 		}

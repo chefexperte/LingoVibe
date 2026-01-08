@@ -171,8 +171,20 @@ describe('vocabularyStore', () => {
 			expect(isWordMastered('книга')).toBe(false);
 		});
 
-		it('should return false for word with 10+ correct but not 100%', () => {
+		it('should stay mastered after one wrong answer if already mastered', () => {
 			for (let i = 0; i < 10; i++) {
+				recordPractice('книга', true);
+			}
+			// Word is now mastered
+			expect(isWordMastered('книга')).toBe(true);
+			
+			// One wrong answer after mastery - should stay mastered
+			recordPractice('книга', false);
+			expect(isWordMastered('книга')).toBe(true);
+		});
+
+		it('should not be mastered if wrong answer before reaching 10 in a row', () => {
+			for (let i = 0; i < 9; i++) {
 				recordPractice('книга', true);
 			}
 			recordPractice('книга', false);
@@ -180,7 +192,7 @@ describe('vocabularyStore', () => {
 			expect(isWordMastered('книга')).toBe(false);
 		});
 
-		it('should return true for word with 10+ correct and 100%', () => {
+		it('should return true for word with 10 correct in a row', () => {
 			for (let i = 0; i < 10; i++) {
 				recordPractice('книга', true);
 			}

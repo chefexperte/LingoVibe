@@ -7,6 +7,9 @@ import { writable, derived, get } from 'svelte/store';
 import { browser } from '$app/environment';
 import { STORAGE_KEYS } from '$lib/utils/constants.js';
 
+// Mastery threshold: number of correct answers in a row needed to master a word
+const MASTERY_THRESHOLD = 10;
+
 /**
  * Vocabulary data structure:
  * {
@@ -123,7 +126,9 @@ export function trackWord(wordData) {
 				proficiency: {
 					correct: 0,
 					total: 0,
-					percentage: 0
+					percentage: 0,
+					masteryProgress: 0,  // Count towards mastery (max 10)
+					isMastered: false    // Flag for mastered status
 				},
 				forms: {}
 			};
@@ -157,7 +162,23 @@ export function recordPractice(word, correct, form = null) {
 		wordData.proficiency.total += 1;
 		if (correct) {
 			wordData.proficiency.correct += 1;
+			
+			// Update mastery progress (max MASTERY_THRESHOLD)
+			if (wordData.proficiency.masteryProgress < MASTERY_THRESHOLD) {
+				wordData.proficiency.masteryProgress += 1;
+			}
+		} else {
+			// Wrong answer resets mastery progress (but doesn't affect already mastered status)
+			wordData.proficiency.masteryProgress = 0;
 		}
+		
+		// Check if mastered (MASTERY_THRESHOLD correct in a row)
+		// Note: Once mastered, status persists even if subsequent answers are wrong
+		if (wordData.proficiency.masteryProgress >= MASTERY_THRESHOLD) {
+			wordData.proficiency.isMastered = true;
+		}
+		
+		// Calculate percentage (for display after mastery)
 		wordData.proficiency.percentage = Math.round(
 			(wordData.proficiency.correct / wordData.proficiency.total) * 100
 		);
@@ -169,6 +190,8 @@ export function recordPractice(word, correct, form = null) {
 					correct: 0,
 					total: 0,
 					percentage: 0,
+					masteryProgress: 0,
+					isMastered: false,
 					lastPracticed: now
 				};
 			}
@@ -177,7 +200,20 @@ export function recordPractice(word, correct, form = null) {
 			formData.total += 1;
 			if (correct) {
 				formData.correct += 1;
+				if (formData.masteryProgress < MASTERY_THRESHOLD) {
+					formData.masteryProgress += 1;
+				}
+			} else {
+				// Wrong answer resets mastery progress (but doesn't affect already mastered status)
+				formData.masteryProgress = 0;
 			}
+			
+			// Check if mastered (MASTERY_THRESHOLD correct in a row)
+			// Note: Once mastered, status persists even if subsequent answers are wrong
+			if (formData.masteryProgress >= MASTERY_THRESHOLD) {
+				formData.isMastered = true;
+			}
+			
 			formData.percentage = Math.round((formData.correct / formData.total) * 100);
 			formData.lastPracticed = now;
 		}
@@ -201,16 +237,13 @@ export function getWordProficiency(word) {
 }
 
 /**
- * Check if word is "mastered" (100% proficiency with at least 10 attempts)
+ * Check if word is "mastered" (10 correct in a row)
  * @param {string} word - The word
  * @returns {boolean}
  */
 export function isWordMastered(word) {
 	const vocab = get(vocabulary);
-	const wordData = vocab[word];
-	if (!wordData) return false;
-
-	return wordData.proficiency.percentage === 100 && wordData.proficiency.correct >= 10;
+	return vocab[word]?.proficiency.isMastered || false;
 }
 
 /**
@@ -227,11 +260,11 @@ export const learnedWords = derived(vocabulary, ($vocab) => {
 });
 
 /**
- * Derived store - mastered words (100% with 10+ correct)
+ * Derived store - mastered words (10 correct in a row)
  */
 export const masteredWords = derived(vocabulary, ($vocab) => {
 	return Object.values($vocab).filter(
-		(word) => word.proficiency.percentage === 100 && word.proficiency.correct >= 10
+		(word) => word.proficiency.isMastered
 	);
 });
 
@@ -242,7 +275,7 @@ export const wordsInProgress = derived(vocabulary, ($vocab) => {
 	return Object.values($vocab).filter(
 		(word) =>
 			word.proficiency.total > 0 &&
-			!(word.proficiency.percentage === 100 && word.proficiency.correct >= 10)
+			!word.proficiency.isMastered
 	);
 });
 
@@ -253,12 +286,12 @@ export const vocabularyStats = derived(vocabulary, ($vocab) => {
 	const words = Object.values($vocab);
 	const total = words.length;
 	const mastered = words.filter(
-		(w) => w.proficiency.percentage === 100 && w.proficiency.correct >= 10
+		(w) => w.proficiency.isMastered
 	).length;
 	const inProgress = words.filter(
 		(w) =>
 			w.proficiency.total > 0 &&
-			!(w.proficiency.percentage === 100 && w.proficiency.correct >= 10)
+			!w.proficiency.isMastered
 	).length;
 	const new_words = words.filter((w) => w.proficiency.total === 0).length;
 

@@ -10,7 +10,6 @@
 	let quizActive = false;
 	let quizSettings = {
 		quizType: 'all',
-		difficulty: 'medium',
 		questionCount: 10,
 		selectedCases: ['nominative', 'genitive', 'dative', 'accusative', 'instrumental', 'prepositional']
 	};
@@ -37,8 +36,21 @@
 	}
 
 	function handleStartQuiz(settings) {
-		quizSettings = settings;
-		startQuiz(settings);
+		// Map word difficulty (common/intermediate/advanced) to quiz difficulty (easy/medium/hard)
+		const difficultyMap = {
+			'common': 'easy',
+			'intermediate': 'medium',
+			'advanced': 'hard'
+		};
+		
+		// Merge top-level difficulty with quiz settings
+		const fullSettings = {
+			...settings,
+			difficulty: difficultyMap[selectedDifficulty] || 'medium'
+		};
+		
+		quizSettings = fullSettings;
+		startQuiz(fullSettings);
 		quizActive = true;
 		showStats = false;
 	}

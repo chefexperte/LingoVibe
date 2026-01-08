@@ -44,15 +44,15 @@
 </script>
 
 <div class="sentence-completion-quiz">
-	<!-- Subtle attribution at top-right -->
-	<div class="quiz-attribution">
-		<WiktionaryAttribution />
-	</div>
-	
 	<div class="question-section">
-		<h3 class="question-text">
-			{quiz.question}
-		</h3>
+		<div class="question-header">
+			<h3 class="question-text">
+				{quiz.question}
+			</h3>
+			<div class="quiz-attribution">
+				<WiktionaryAttribution />
+			</div>
+		</div>
 		
 		<!-- Russian Sentence -->
 		<div class="sentence-display russian">
@@ -66,9 +66,23 @@
 
 		<!-- Word to Use -->
 		<div class="word-hint">
-			<strong>Use this word:</strong> 
-			<span class="word-russian">{quiz.word}</span>
-			<span class="word-translation">({quiz.wordTranslation})</span>
+			<div class="word-hint-content">
+				<div class="word-hint-text">
+					<strong>Use this word:</strong> 
+					<span class="word-russian">{quiz.word}</span>
+					<span class="word-translation">({quiz.wordTranslation})</span>
+				</div>
+				<a 
+					href="https://en.wiktionary.org/wiki/{quiz.word}#Russian"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="wiktionary-link"
+					title="View on Wiktionary"
+				>
+					<span class="link-icon">📖</span>
+					<span class="link-text">Wiktionary</span>
+				</a>
+			</div>
 		</div>
 
 		<!-- Case Hint (after submission) -->
@@ -123,27 +137,29 @@
 		position: relative;
 	}
 
-	.quiz-attribution {
-		position: absolute;
-		top: 0;
-		right: 0;
-		z-index: 10;
-	}
-
 	.question-section {
 		text-align: center;
 		margin-bottom: 30px;
 	}
 
+	.question-header {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 15px;
+		margin-bottom: 20px;
+	}
+
 	.question-text {
+		flex: 1;
 		font-size: 20px;
 		font-weight: 600;
-		margin-bottom: 20px;
 		color: var(--text-color);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 8px;
+		text-align: left;
+	}
+
+	.quiz-attribution {
+		flex-shrink: 0;
 	}
 
 	.sentence-display {
@@ -176,6 +192,18 @@
 		font-size: 16px;
 	}
 
+	.word-hint-content {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 15px;
+		flex-wrap: wrap;
+	}
+
+	.word-hint-text {
+		flex: 0 1 auto;
+	}
+
 	.word-russian {
 		font-size: 20px;
 		font-weight: bold;
@@ -185,6 +213,38 @@
 
 	.word-translation {
 		color: var(--text-secondary);
+	}
+
+	.wiktionary-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 8px 14px;
+		background: #f3f4f6;
+		border: 1px solid #d1d5db;
+		border-radius: 8px;
+		text-decoration: none;
+		color: var(--text-color);
+		font-size: 14px;
+		font-weight: 500;
+		transition: all 0.2s;
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+
+	.wiktionary-link:hover {
+		background: #e5e7eb;
+		border-color: #9ca3af;
+		transform: translateY(-1px);
+		box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	}
+
+	.link-icon {
+		font-size: 16px;
+	}
+
+	.link-text {
+		font-size: 13px;
 	}
 
 	.case-hint {
@@ -246,6 +306,12 @@
 	}
 
 	@media (max-width: 768px) {
+		.question-header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 10px;
+		}
+
 		.question-text {
 			font-size: 18px;
 		}
@@ -263,6 +329,11 @@
 		.word-hint {
 			font-size: 14px;
 			padding: 12px;
+		}
+
+		.word-hint-content {
+			flex-direction: column;
+			gap: 10px;
 		}
 
 		.word-russian {

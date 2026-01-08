@@ -83,8 +83,17 @@
 		submitAnswer(correct, userAnswer);
 		
 		// Record practice attempt
-		const form = currentQuiz.targetCase || null;
-		recordPractice(currentQuiz.word, correct, form);
+		// For case identification quizzes, track all correct cases
+		// For other quiz types, use the targetCase
+		if (currentQuiz.type === 'case-identification' && currentQuiz.correctCases) {
+			// Record practice for each correct case
+			currentQuiz.correctCases.forEach(caseName => {
+				recordPractice(currentQuiz.word, correct, caseName);
+			});
+		} else {
+			const form = currentQuiz.targetCase || null;
+			recordPractice(currentQuiz.word, correct, form);
+		}
 	}
 
 	function handleNext() {

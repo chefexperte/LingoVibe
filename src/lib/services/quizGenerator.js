@@ -33,9 +33,10 @@ export const DIFFICULTY_LEVELS = {
  * @param {string} type - Quiz type
  * @param {string} difficulty - Difficulty level
  * @param {Array} excludeWords - Words to exclude (to avoid repetition)
+ * @param {Array} selectedCases - Optional array of cases to include in quiz
  * @returns {Promise<Object>} Quiz question object
  */
-export async function generateQuiz(type, difficulty = DIFFICULTY_LEVELS.MEDIUM, excludeWords = []) {
+export async function generateQuiz(type, difficulty = DIFFICULTY_LEVELS.MEDIUM, excludeWords = [], selectedCases = null) {
 	// Select random quiz type if 'all' is specified
 	if (type === QUIZ_TYPES.ALL) {
 		const types = [
@@ -49,15 +50,15 @@ export async function generateQuiz(type, difficulty = DIFFICULTY_LEVELS.MEDIUM, 
 
 	switch (type) {
 		case QUIZ_TYPES.CASE_FORMATION:
-			return generateCaseFormationQuiz(difficulty, excludeWords);
+			return generateCaseFormationQuiz(difficulty, excludeWords, selectedCases);
 		case QUIZ_TYPES.CASE_FORMATION_MC:
-			return generateCaseFormationMCQuiz(difficulty, excludeWords);
+			return generateCaseFormationMCQuiz(difficulty, excludeWords, selectedCases);
 		case QUIZ_TYPES.CASE_IDENTIFICATION:
-			return generateCaseIdentificationQuiz(difficulty, excludeWords);
+			return generateCaseIdentificationQuiz(difficulty, excludeWords, selectedCases);
 		case QUIZ_TYPES.SENTENCE_COMPLETION:
-			return generateSentenceCompletionQuiz(difficulty, excludeWords);
+			return generateSentenceCompletionQuiz(difficulty, excludeWords, selectedCases);
 		default:
-			return generateCaseFormationQuiz(difficulty, excludeWords);
+			return generateCaseFormationQuiz(difficulty, excludeWords, selectedCases);
 	}
 }
 
@@ -65,11 +66,12 @@ export async function generateQuiz(type, difficulty = DIFFICULTY_LEVELS.MEDIUM, 
  * Generate a case formation quiz (fill-in-the-blank)
  * @param {string} difficulty - Difficulty level
  * @param {Array} excludeWords - Words to exclude
+ * @param {Array} selectedCases - Optional array of cases to include
  * @returns {Promise<Object>} Quiz question
  */
-async function generateCaseFormationQuiz(difficulty, excludeWords = []) {
+async function generateCaseFormationQuiz(difficulty, excludeWords = [], selectedCases = null) {
 	const wordDifficulty = mapDifficultyToWordLevel(difficulty);
-	const targetCase = selectRandomCase(difficulty);
+	const targetCase = selectRandomCase(difficulty, selectedCases);
 	const nounData = selectRandomNounData(wordDifficulty, excludeWords);
 	
 	try {
@@ -105,11 +107,12 @@ async function generateCaseFormationQuiz(difficulty, excludeWords = []) {
  * Generate a multiple choice case formation quiz
  * @param {string} difficulty - Difficulty level
  * @param {Array} excludeWords - Words to exclude
+ * @param {Array} selectedCases - Optional array of cases to include
  * @returns {Promise<Object>} Quiz question
  */
-async function generateCaseFormationMCQuiz(difficulty, excludeWords = []) {
+async function generateCaseFormationMCQuiz(difficulty, excludeWords = [], selectedCases = null) {
 	const wordDifficulty = mapDifficultyToWordLevel(difficulty);
-	const targetCase = selectRandomCase(difficulty);
+	const targetCase = selectRandomCase(difficulty, selectedCases);
 	const nounData = selectRandomNounData(wordDifficulty, excludeWords);
 	
 	try {
@@ -168,9 +171,10 @@ async function generateCaseFormationMCQuiz(difficulty, excludeWords = []) {
  * Generate a case identification quiz
  * @param {string} difficulty - Difficulty level
  * @param {Array} excludeWords - Words to exclude
+ * @param {Array} selectedCases - Optional array of cases to include
  * @returns {Promise<Object>} Quiz question
  */
-async function generateCaseIdentificationQuiz(difficulty, excludeWords = []) {
+async function generateCaseIdentificationQuiz(difficulty, excludeWords = [], selectedCases = null) {
 	const wordDifficulty = mapDifficultyToWordLevel(difficulty);
 	const nounData = selectRandomNounData(wordDifficulty, excludeWords);
 	
@@ -226,9 +230,10 @@ async function generateCaseIdentificationQuiz(difficulty, excludeWords = []) {
  * Generate a sentence completion quiz
  * @param {string} difficulty - Difficulty level
  * @param {Array} excludeWords - Words to exclude
+ * @param {Array} selectedCases - Optional array of cases to include
  * @returns {Promise<Object>} Quiz question
  */
-async function generateSentenceCompletionQuiz(difficulty, excludeWords = []) {
+async function generateSentenceCompletionQuiz(difficulty, excludeWords = [], selectedCases = null) {
 	const wordDifficulty = mapDifficultyToWordLevel(difficulty);
 	const template = getRandomTemplate(wordDifficulty);
 	const nounData = selectRandomNounData(wordDifficulty, excludeWords);
@@ -286,12 +291,16 @@ function selectRandomNounData(difficulty, excludeWords = []) {
 /**
  * Select a random case based on difficulty
  * @param {string} difficulty - Difficulty level
+ * @param {Array} selectedCases - Optional array of cases to select from
  * @returns {string} Case name
  */
-function selectRandomCase(difficulty) {
+function selectRandomCase(difficulty, selectedCases = null) {
 	let availableCases;
 	
-	if (difficulty === DIFFICULTY_LEVELS.EASY) {
+	// If selectedCases is provided, use only those cases
+	if (selectedCases && selectedCases.length > 0) {
+		availableCases = selectedCases;
+	} else if (difficulty === DIFFICULTY_LEVELS.EASY) {
 		// Easy: Only nominative, accusative, genitive, prepositional
 		availableCases = ['nominative', 'accusative', 'genitive', 'prepositional'];
 	} else if (difficulty === DIFFICULTY_LEVELS.MEDIUM) {

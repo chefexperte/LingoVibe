@@ -84,6 +84,8 @@
 		<h2>Practice & Quizzes</h2>
 		
 		<div class="card" style="margin-bottom: 30px;">
+			<h3 style="margin-bottom: 8px;">Word Difficulty</h3>
+			<p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">(affects how common the words are)</p>
 			<DifficultySelector selected={selectedDifficulty} onChange={handleDifficultyChange} />
 		</div>
 

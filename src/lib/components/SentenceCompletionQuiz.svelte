@@ -6,6 +6,7 @@
 	import WiktionaryAttribution from './WiktionaryAttribution.svelte';
 	import QuizFeedback from './QuizFeedback.svelte';
 	import { validateAnswer } from '$lib/services/quizGenerator.js';
+	import { quizState } from '$lib/stores/quizStore.js';
 
 	export let quiz = null;
 	export let onSubmit = () => {};
@@ -14,6 +15,9 @@
 	let userAnswer = '';
 	let submitted = false;
 	let isCorrect = false;
+
+	$: state = $quizState;
+	$: isLastQuestion = state.currentQuestionIndex + 1 >= state.totalQuestions;
 
 	function handleSubmit() {
 		if (submitted || !userAnswer.trim()) return;
@@ -94,7 +98,7 @@
 			</button>
 		{:else}
 			<button class="btn btn-secondary next-btn" on:click={handleNext}>
-				Next Question →
+				{isLastQuestion ? 'Show Results 🎉' : 'Next Question →'}
 			</button>
 		{/if}
 	</div>

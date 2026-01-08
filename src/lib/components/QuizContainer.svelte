@@ -12,8 +12,10 @@
 		setCurrentQuiz,
 		submitAnswer,
 		nextQuestion,
-		endQuiz
+		endQuiz,
+		calculateQuizXP
 	} from '$lib/stores/quizStore.js';
+	import { addXP } from '$lib/stores/lessonStore.js';
 	import CaseFormationQuiz from './CaseFormationQuiz.svelte';
 	import CaseIdentificationQuiz from './CaseIdentificationQuiz.svelte';
 	import SentenceCompletionQuiz from './SentenceCompletionQuiz.svelte';
@@ -25,6 +27,7 @@
 	let currentQuiz = null;
 	let showResults = false;
 	let finalResults = null;
+	let earnedXP = 0;
 
 	$: state = $quizState;
 	$: progress = $quizProgress;
@@ -49,7 +52,8 @@
 			const quiz = await generateQuiz(
 				state.settings.quizType,
 				state.settings.difficulty,
-				state.usedWords
+				state.usedWords,
+				state.settings.selectedCases
 			);
 
 			currentQuiz = quiz;
@@ -74,6 +78,11 @@
 
 	function showResultsScreen() {
 		finalResults = endQuiz();
+		
+		// Calculate and award XP
+		earnedXP = calculateQuizXP(state.settings, finalResults.accuracy);
+		addXP(earnedXP);
+		
 		showResults = true;
 		onComplete(finalResults);
 	}
@@ -163,6 +172,10 @@
 				<div class="stat-item">
 					<div class="stat-value">{finalResults.totalQuestions}</div>
 					<div class="stat-label">Questions</div>
+				</div>
+				<div class="stat-item xp-stat">
+					<div class="stat-value">+{earnedXP} XP</div>
+					<div class="stat-label">Experience Earned</div>
 				</div>
 			</div>
 
@@ -329,7 +342,7 @@
 
 	.results-stats {
 		display: grid;
-		grid-template-columns: repeat(2, 1fr);
+		grid-template-columns: repeat(3, 1fr);
 		gap: 20px;
 		margin: 30px 0;
 	}
@@ -350,6 +363,10 @@
 	.stat-label {
 		font-size: 14px;
 		color: var(--text-secondary);
+	}
+
+	.xp-stat .stat-value {
+		color: #ffb700;
 	}
 
 	.results-message {

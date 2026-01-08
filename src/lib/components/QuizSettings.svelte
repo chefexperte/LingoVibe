@@ -4,14 +4,29 @@
 	 * Allows users to configure quiz type, difficulty, and number of questions
 	 */
 	import { QUIZ_TYPES, DIFFICULTY_LEVELS } from '$lib/services/quizGenerator.js';
+	import { calculateQuizXPRange } from '$lib/stores/quizStore.js';
 
 	export let settings = {
 		quizType: 'all',
 		difficulty: 'medium',
-		questionCount: 10
+		questionCount: 10,
+		selectedCases: ['nominative', 'genitive', 'dative', 'accusative', 'instrumental', 'prepositional']
 	};
 	
 	export let onStart = () => {};
+
+	// Russian cases for selection
+	const allCases = [
+		{ value: 'nominative', label: 'Nominative', russian: 'именительный' },
+		{ value: 'genitive', label: 'Genitive', russian: 'родительный' },
+		{ value: 'dative', label: 'Dative', russian: 'дательный' },
+		{ value: 'accusative', label: 'Accusative', russian: 'винительный' },
+		{ value: 'instrumental', label: 'Instrumental', russian: 'творительный' },
+		{ value: 'prepositional', label: 'Prepositional', russian: 'предложный' }
+	];
+
+	$: xpRange = calculateQuizXPRange(settings);
+	$: casesValid = settings.selectedCases && settings.selectedCases.length > 0;
 
 	const quizTypeOptions = [
 		{ value: QUIZ_TYPES.ALL, label: 'All Types (Mixed)', icon: '🎲' },
@@ -29,7 +44,23 @@
 
 	const questionCountOptions = [5, 10, 20];
 
+	function toggleCase(caseValue) {
+		if (!settings.selectedCases) {
+			settings.selectedCases = [];
+		}
+		
+		if (settings.selectedCases.includes(caseValue)) {
+			// Don't allow deselecting if it's the last one
+			if (settings.selectedCases.length > 1) {
+				settings.selectedCases = settings.selectedCases.filter(c => c !== caseValue);
+			}
+		} else {
+			settings.selectedCases = [...settings.selectedCases, caseValue];
+		}
+	}
+
 	function handleStart() {
+		if (!casesValid) return;
 		onStart(settings);
 	}
 </script>
@@ -57,7 +88,8 @@
 
 	<!-- Difficulty Selector -->
 	<div class="setting-group" role="group" aria-labelledby="difficulty-label">
-		<span id="difficulty-label" class="setting-label">Difficulty</span>
+		<span id="difficulty-label" class="setting-label">Quiz Difficulty</span>
+		<div class="setting-subtitle">(affects which cases are tested)</div>
 		<div class="difficulty-options">
 			{#each difficultyOptions as option}
 				<button
@@ -93,8 +125,49 @@
 		</div>
 	</div>
 
+	<!-- Case Selection -->
+	<div class="setting-group" role="group" aria-labelledby="cases-label">
+		<span id="cases-label" class="setting-label">Cases to Test</span>
+		<div class="setting-subtitle">(select at least one)</div>
+		<div class="cases-grid">
+			{#each allCases as caseOption}
+				<button
+					class="case-checkbox"
+					class:selected={settings.selectedCases && settings.selectedCases.includes(caseOption.value)}
+					on:click={() => toggleCase(caseOption.value)}
+					aria-label={caseOption.label}
+					aria-pressed={settings.selectedCases && settings.selectedCases.includes(caseOption.value)}
+				>
+					<span class="checkbox-icon">
+						{#if settings.selectedCases && settings.selectedCases.includes(caseOption.value)}
+							☑️
+						{:else}
+							☐
+						{/if}
+					</span>
+					<span class="case-name">
+						<span class="case-label">{caseOption.label}</span>
+						<span class="case-russian">({caseOption.russian})</span>
+					</span>
+				</button>
+			{/each}
+		</div>
+	</div>
+
+	<!-- XP Preview -->
+	<div class="xp-preview">
+		<div class="xp-preview-content">
+			<span class="xp-icon">✨</span>
+			<div class="xp-text">
+				<span class="xp-label">Potential XP:</span>
+				<span class="xp-range">{xpRange.minXP}-{xpRange.maxXP} XP</span>
+			</div>
+			<span class="xp-info" title="XP is based on difficulty, quiz type, number of questions, and your accuracy">ℹ️</span>
+		</div>
+	</div>
+
 	<!-- Start Button -->
-	<button class="btn btn-primary start-button" on:click={handleStart}>
+	<button class="btn btn-primary start-button" on:click={handleStart} disabled={!casesValid}>
 		Start Quiz 🚀
 	</button>
 </div>
@@ -122,6 +195,14 @@
 		margin-bottom: 12px;
 		color: var(--text-color);
 		font-size: 15px;
+	}
+
+	.setting-subtitle {
+		display: block;
+		font-size: 12px;
+		color: var(--text-secondary);
+		margin-top: -8px;
+		margin-bottom: 12px;
 	}
 
 	.quiz-type-options {
@@ -254,6 +335,101 @@
 		padding: 16px;
 	}
 
+	.cases-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 10px;
+	}
+
+	.case-checkbox {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		padding: 12px;
+		background: var(--bg-color);
+		border: 2px solid var(--border-color);
+		border-radius: 8px;
+		cursor: pointer;
+		transition: all 0.2s;
+		text-align: left;
+	}
+
+	.case-checkbox:hover {
+		border-color: var(--primary-color);
+		transform: translateY(-2px);
+	}
+
+	.case-checkbox.selected {
+		border-color: var(--primary-color);
+		background: #f0ffe0;
+	}
+
+	.checkbox-icon {
+		font-size: 20px;
+		flex-shrink: 0;
+	}
+
+	.case-name {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		flex: 1;
+	}
+
+	.case-label {
+		font-weight: 600;
+		font-size: 14px;
+		color: var(--text-color);
+	}
+
+	.case-russian {
+		font-size: 11px;
+		color: var(--text-secondary);
+	}
+
+	.xp-preview {
+		margin-top: 20px;
+		padding: 15px;
+		background: linear-gradient(135deg, #fff9e6 0%, #ffe6cc 100%);
+		border-radius: 8px;
+		border: 2px solid #ffb700;
+	}
+
+	.xp-preview-content {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.xp-icon {
+		font-size: 24px;
+	}
+
+	.xp-text {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.xp-label {
+		font-size: 12px;
+		color: var(--text-secondary);
+		font-weight: 600;
+	}
+
+	.xp-range {
+		font-size: 18px;
+		font-weight: bold;
+		color: #ffb700;
+	}
+
+	.xp-info {
+		font-size: 16px;
+		cursor: help;
+		opacity: 0.6;
+	}
+
 	@media (max-width: 768px) {
 		.quiz-settings {
 			padding: 20px;
@@ -281,6 +457,18 @@
 		.count-option {
 			padding: 10px;
 			font-size: 14px;
+		}
+
+		.cases-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.case-label {
+			font-size: 13px;
+		}
+
+		.xp-range {
+			font-size: 16px;
 		}
 	}
 </style>

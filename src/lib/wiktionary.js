@@ -444,6 +444,14 @@ function applyBasicDeclension(declension) {
 			declension.declension.singular.accusative = animacy === 'animate' ? word + 'а' : word;
 			declension.declension.singular.instrumental = word + 'ом';
 			declension.declension.singular.prepositional = word + 'е';
+			
+			// Plural
+			declension.declension.plural.nominative = word + 'ы';
+			declension.declension.plural.genitive = word + 'ов';
+			declension.declension.plural.dative = word + 'ам';
+			declension.declension.plural.accusative = animacy === 'animate' ? word + 'ов' : word + 'ы';
+			declension.declension.plural.instrumental = word + 'ами';
+			declension.declension.plural.prepositional = word + 'ах';
 		}
 		// Soft ending (ь, й)
 		else if (/[ьй]$/.test(word)) {
@@ -453,6 +461,14 @@ function applyBasicDeclension(declension) {
 			declension.declension.singular.accusative = animacy === 'animate' ? stem + 'я' : word;
 			declension.declension.singular.instrumental = stem + 'ем';
 			declension.declension.singular.prepositional = stem + 'е';
+			
+			// Plural
+			declension.declension.plural.nominative = stem + 'и';
+			declension.declension.plural.genitive = stem + 'ей';
+			declension.declension.plural.dative = stem + 'ям';
+			declension.declension.plural.accusative = animacy === 'animate' ? stem + 'ей' : stem + 'и';
+			declension.declension.plural.instrumental = stem + 'ями';
+			declension.declension.plural.prepositional = stem + 'ях';
 		}
 	} else if (gender === 'feminine') {
 		// -а ending
@@ -463,6 +479,14 @@ function applyBasicDeclension(declension) {
 			declension.declension.singular.accusative = stem + 'у';
 			declension.declension.singular.instrumental = stem + 'ой';
 			declension.declension.singular.prepositional = stem + 'е';
+			
+			// Plural
+			declension.declension.plural.nominative = stem + 'ы';
+			declension.declension.plural.genitive = stem;
+			declension.declension.plural.dative = stem + 'ам';
+			declension.declension.plural.accusative = stem + 'ы';
+			declension.declension.plural.instrumental = stem + 'ами';
+			declension.declension.plural.prepositional = stem + 'ах';
 		}
 		// -я ending
 		else if (/я$/.test(word)) {
@@ -472,6 +496,14 @@ function applyBasicDeclension(declension) {
 			declension.declension.singular.accusative = stem + 'ю';
 			declension.declension.singular.instrumental = stem + 'ей';
 			declension.declension.singular.prepositional = stem + 'е';
+			
+			// Plural
+			declension.declension.plural.nominative = stem + 'и';
+			declension.declension.plural.genitive = stem + 'ь';
+			declension.declension.plural.dative = stem + 'ям';
+			declension.declension.plural.accusative = stem + 'и';
+			declension.declension.plural.instrumental = stem + 'ями';
+			declension.declension.plural.prepositional = stem + 'ях';
 		}
 		// -ь ending
 		else if (/ь$/.test(word)) {
@@ -481,6 +513,14 @@ function applyBasicDeclension(declension) {
 			declension.declension.singular.accusative = word;
 			declension.declension.singular.instrumental = stem + 'ью';
 			declension.declension.singular.prepositional = stem + 'и';
+			
+			// Plural
+			declension.declension.plural.nominative = stem + 'и';
+			declension.declension.plural.genitive = stem + 'ей';
+			declension.declension.plural.dative = stem + 'ям';
+			declension.declension.plural.accusative = stem + 'и';
+			declension.declension.plural.instrumental = stem + 'ями';
+			declension.declension.plural.prepositional = stem + 'ях';
 		}
 	} else if (gender === 'neuter') {
 		// -о ending
@@ -491,6 +531,14 @@ function applyBasicDeclension(declension) {
 			declension.declension.singular.accusative = word;
 			declension.declension.singular.instrumental = stem + 'ом';
 			declension.declension.singular.prepositional = stem + 'е';
+			
+			// Plural
+			declension.declension.plural.nominative = stem + 'а';
+			declension.declension.plural.genitive = stem;
+			declension.declension.plural.dative = stem + 'ам';
+			declension.declension.plural.accusative = stem + 'а';
+			declension.declension.plural.instrumental = stem + 'ами';
+			declension.declension.plural.prepositional = stem + 'ах';
 		}
 		// -е or -ё ending
 		else if (/[её]$/.test(word)) {
@@ -500,6 +548,14 @@ function applyBasicDeclension(declension) {
 			declension.declension.singular.accusative = word;
 			declension.declension.singular.instrumental = stem + 'ем';
 			declension.declension.singular.prepositional = stem + 'е';
+			
+			// Plural
+			declension.declension.plural.nominative = stem + 'я';
+			declension.declension.plural.genitive = stem + 'ей';
+			declension.declension.plural.dative = stem + 'ям';
+			declension.declension.plural.accusative = stem + 'я';
+			declension.declension.plural.instrumental = stem + 'ями';
+			declension.declension.plural.prepositional = stem + 'ях';
 		}
 	}
 }

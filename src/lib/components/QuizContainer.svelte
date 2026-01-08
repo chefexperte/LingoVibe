@@ -43,7 +43,18 @@
 		error = null;
 
 		try {
-			// Check if quiz is complete
+			// Defensive check: ensure we haven't exceeded question limit
+			// We check both answers.length and currentQuestionIndex to prevent edge cases:
+			// - answers.length: Primary check - prevents loading if we've already recorded enough answers
+			//   (Note: Each question can only be answered once due to 'submitted' flag in quiz components)
+			// - currentQuestionIndex: Secondary check - prevents loading if the index counter has advanced too far
+			//   This could happen if nextQuestion() is called but loadNextQuiz() hasn't completed yet
+			// This dual check guards against race conditions in async quiz loading
+			if (state.answers.length >= state.totalQuestions) {
+				showResultsScreen();
+				return;
+			}
+			
 			if (state.currentQuestionIndex >= state.totalQuestions) {
 				showResultsScreen();
 				return;

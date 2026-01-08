@@ -378,6 +378,12 @@
 		color: var(--text-color);
 	}
 
+	@media (max-width: 1024px) and (min-width: 769px) {
+		.results-stats {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
 	@media (max-width: 768px) {
 		.quiz-header {
 			padding: 15px;

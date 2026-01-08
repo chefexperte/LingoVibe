@@ -12,8 +12,9 @@
 	
 	const navItems = [
 		{ path: '/', label: 'Home', icon: '🏠' },
-		{ path: '/learn', label: 'Learn', icon: '📚' },
+		{ path: '/courses', label: 'Courses', icon: '📚' },
 		{ path: '/practice', label: 'Practice', icon: '✍️' },
+		{ path: '/achievements', label: 'Achievements', icon: '🏆' },
 		{ path: '/settings', label: 'Settings', icon: '⚙️' }
 	];
 	

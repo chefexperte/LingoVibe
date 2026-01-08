@@ -1,19 +1,26 @@
 <script>
+	import { onMount } from 'svelte';
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
 	import { user, logout } from '$lib/stores/userStore.js';
 	import { totalXP } from '$lib/stores/lessonStore.js';
 	import { isGithubAuthenticated } from '$lib/stores/syncStore.js';
+	import { initAchievementStore } from '$lib/stores/achievementStore.js';
 	import LoginButton from '$lib/components/LoginButton.svelte';
 	import UserProfile from '$lib/components/UserProfile.svelte';
 	import SyncStatus from '$lib/components/SyncStatus.svelte';
 	import MobileMenu from '$lib/components/MobileMenu.svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
+	import AchievementPopup from '$lib/components/AchievementPopup.svelte';
 	import '../app.css';
 	
 	let showUserMenu = false;
 	let showGithubMenu = false;
 	let showMobileSidebar = false;
+	
+	onMount(() => {
+		initAchievementStore();
+	});
 	
 	function handleLogout() {
 		if (confirm('Are you sure you want to log out? Your progress will be saved.')) {
@@ -46,8 +53,9 @@
 		</div>
 		<nav class="desktop-nav">
 			<a href="{base}/" class:active={$page.url.pathname === `${base}/`}>Home</a>
-			<a href="{base}/learn" class:active={$page.url.pathname.startsWith(`${base}/learn`)}>Learn</a>
+			<a href="{base}/courses" class:active={$page.url.pathname.startsWith(`${base}/courses`)}>Courses</a>
 			<a href="{base}/practice" class:active={$page.url.pathname === `${base}/practice`}>Practice</a>
+			<a href="{base}/achievements" class:active={$page.url.pathname === `${base}/achievements`}>Achievements</a>
 			
 			{#if $isGithubAuthenticated}
 				<UserProfile bind:showMenu={showGithubMenu} />
@@ -102,6 +110,9 @@
 <main>
 	<slot />
 </main>
+
+<!-- Global Achievement Popup -->
+<AchievementPopup />
 
 <footer>
 	<div class="container">

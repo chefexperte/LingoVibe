@@ -261,6 +261,19 @@ margin-bottom: 20px;
 }
 
 @media (max-width: 768px) {
+.vocabulary-page {
+padding: 15px;
+}
+
+.vocabulary-header h1 {
+font-size: 28px;
+}
+
+.vocab-stats {
+grid-template-columns: 1fr 1fr;
+gap: 15px;
+}
+
 .vocabulary-controls {
 flex-direction: column;
 align-items: stretch;
@@ -270,8 +283,32 @@ align-items: stretch;
 flex-direction: column;
 }
 
+.filter-btn {
+width: 100%;
+text-align: left;
+}
+
+.sort-group {
+width: 100%;
+}
+
+.sort-group select {
+width: 100%;
+}
+
 .words-grid {
 grid-template-columns: 1fr;
+gap: 15px;
+}
+}
+
+@media (max-width: 480px) {
+.vocab-stats {
+grid-template-columns: 1fr;
+}
+
+.stat-number {
+font-size: 28px;
 }
 }
 </style>

@@ -338,4 +338,66 @@
 	.info-value {
 		font-weight: 600;
 	}
+
+	@media (max-width: 768px) {
+		.word-card {
+			padding: 15px;
+		}
+
+		.word-russian {
+			font-size: 24px;
+		}
+
+		.word-header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 10px;
+		}
+
+		.mastered-badge {
+			align-self: flex-start;
+		}
+
+		.word-metadata {
+			gap: 6px;
+		}
+
+		.meta-tag {
+			font-size: 11px;
+			padding: 3px 8px;
+		}
+
+		.form-item {
+			grid-template-columns: 80px 1fr 50px;
+			gap: 8px;
+		}
+
+		.form-name {
+			font-size: 12px;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.word-russian {
+			font-size: 20px;
+		}
+
+		.proficiency-value {
+			font-size: 16px;
+		}
+
+		.form-item {
+			grid-template-columns: 1fr;
+			gap: 5px;
+		}
+
+		.form-progress {
+			order: 2;
+		}
+
+		.form-stats {
+			order: 3;
+			text-align: left;
+		}
+	}
 </style>

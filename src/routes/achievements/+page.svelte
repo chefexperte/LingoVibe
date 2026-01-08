@@ -158,12 +158,25 @@
 	}
 
 	@media (max-width: 768px) {
+		.achievements-page {
+			padding: 15px;
+		}
+
 		.achievements-header h1 {
 			font-size: 28px;
 		}
 
 		.achievements-grid {
 			grid-template-columns: 1fr;
+			gap: 15px;
+		}
+
+		.achievement-card {
+			padding: 15px;
+		}
+
+		.achievement-icon {
+			font-size: 36px;
 		}
 	}
 </style>

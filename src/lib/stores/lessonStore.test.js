@@ -135,4 +135,38 @@ describe('lessonStore', () => {
 			expect(stored).toBe('50');
 		});
 	});
+
+	describe('updateStreak', () => {
+		it('should increment streak if practiced yesterday', () => {
+			const yesterday = new Date();
+			yesterday.setDate(yesterday.getDate() - 1);
+			lastActiveDate.set(yesterday.toISOString().split('T')[0]);
+			streak.set(5);
+
+			completeLesson('ru', 1, 0);
+
+			expect(get(streak)).toBe(6);
+		});
+
+		it('should reset streak if missed a day', () => {
+			const threeDaysAgo = new Date();
+			threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+			lastActiveDate.set(threeDaysAgo.toISOString().split('T')[0]);
+			streak.set(10);
+
+			completeLesson('ru', 1, 0);
+
+			expect(get(streak)).toBe(1);
+		});
+
+		it('should not change streak if already active today', () => {
+			const today = new Date().toISOString().split('T')[0];
+			lastActiveDate.set(today);
+			streak.set(7);
+
+			completeLesson('ru', 2, 0);
+
+			expect(get(streak)).toBe(7);
+		});
+	});
 });

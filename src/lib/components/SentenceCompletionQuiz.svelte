@@ -312,6 +312,10 @@
 			gap: 10px;
 		}
 
+		.sentence-completion-quiz {
+			padding: 0;
+		}
+
 		.question-text {
 			font-size: 18px;
 		}
@@ -341,13 +345,14 @@
 		}
 
 		.answer-input {
-			padding: 12px 16px;
 			font-size: 16px;
+			padding: 14px;
 		}
 
 		.submit-btn,
 		.next-btn {
-			padding: 12px;
+			width: 100%;
+			padding: 14px;
 			font-size: 16px;
 		}
 	}

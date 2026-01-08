@@ -7,7 +7,7 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { user } from '$lib/stores/userStore.js';
-	import { totalXP } from '$lib/stores/lessonStore.js';
+	import { totalXP, streak } from '$lib/stores/lessonStore.js';
 	import { isGithubAuthenticated, githubUser } from '$lib/stores/syncStore.js';
 	import { masteredWords, vocabularyStats } from '$lib/stores/vocabularyStore.js';
 	import { unlockedAchievements } from '$lib/stores/achievementStore.js';
@@ -157,7 +157,7 @@
 				</div>
 				<div class="stat-item">
 					<span class="stat-icon">🔥</span>
-					<span class="stat-text">{$user.streak || 0} Day Streak</span>
+					<span class="stat-text">{$streak} Day Streak</span>
 				</div>
 				<div class="stat-item">
 					<span class="stat-icon">📖</span>

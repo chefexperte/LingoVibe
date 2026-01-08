@@ -57,11 +57,20 @@ export async function fetchFromRussianWiktionary(word) {
  */
 function parseRussianWiktionaryHTML(word, html) {
 	try {
-		// Look for inflection table patterns in Russian Wiktionary
-		// Pattern 1: Standard inflection table with падеж headers
-		const tableMatch = html.match(/<table[^>]*class="[^"]*inflection[^"]*"[^>]*>(.*?)<\/table>/is);
+		// Look for morfotable (Russian Wiktionary's declension table class)
+		const tableMatch = html.match(/<table[^>]*class="[^"]*morfotable[^"]*ru[^"]*"[^>]*>(.*?)<\/table>/is);
 		if (tableMatch) {
 			const tableHTML = tableMatch[1];
+			const declension = extractDeclensionFromTable(word, tableHTML);
+			if (declension) {
+				return declension;
+			}
+		}
+		
+		// Fallback: Look for inflection-table class (less common)
+		const inflectionMatch = html.match(/<table[^>]*class="[^"]*inflection[^"]*"[^>]*>(.*?)<\/table>/is);
+		if (inflectionMatch) {
+			const tableHTML = inflectionMatch[1];
 			const declension = extractDeclensionFromTable(word, tableHTML);
 			if (declension) {
 				return declension;
@@ -89,13 +98,14 @@ function parseRussianWiktionaryHTML(word, html) {
  */
 function extractDeclensionFromTable(word, tableHTML) {
 	// Russian Wiktionary uses these case abbreviations
+	// IMPORTANT: Patterns must match the ENTIRE case label, not just contain the pattern
 	const casePatterns = {
-		nominative: /(?:И\.?м\.?|именительный)/i,
-		genitive: /(?:Р\.?д\.?|родительный)/i,
-		dative: /(?:Д\.?т\.?|дательный)/i,
-		accusative: /(?:В\.?н\.?|винительный)/i,
-		instrumental: /(?:Т\.?в\.?|творительный)/i,
-		prepositional: /(?:П\.?р\.?|предложный)/i
+		nominative: /^Им\.$/i,
+		genitive: /^Р\.$/i,
+		dative: /^Д\.$/i,
+		accusative: /^В\.$/i,
+		instrumental: /^Тв\.$/i,
+		prepositional: /^Пр\.$/i
 	};
 	
 	const declension = {
@@ -130,14 +140,22 @@ function extractDeclensionFromTable(word, tableHTML) {
 		// Extract singular and plural forms
 		// Usually: [case label] [singular] [plural]
 		if (cells.length >= 2) {
-			const singularForm = cleanText(cells[1]);
+			let singularForm = cleanText(cells[1]);
+			// Handle variant forms (e.g., "form1 //form2") - take the first one
+			if (singularForm.includes('//')) {
+				singularForm = singularForm.split('//')[0].trim();
+			}
 			if (singularForm && singularForm !== '—' && singularForm !== '-') {
 				declension.declension.singular[caseName] = singularForm;
 			}
 		}
 		
 		if (cells.length >= 3) {
-			const pluralForm = cleanText(cells[2]);
+			let pluralForm = cleanText(cells[2]);
+			// Handle variant forms (e.g., "form1 //form2") - take the first one
+			if (pluralForm.includes('//')) {
+				pluralForm = pluralForm.split('//')[0].trim();
+			}
 			if (pluralForm && pluralForm !== '—' && pluralForm !== '-') {
 				declension.declension.plural[caseName] = pluralForm;
 			}
@@ -223,8 +241,10 @@ function extractDeclensionFromHTML(word, html) {
 function cleanText(text) {
 	if (!text) return '';
 	
+	// First, remove content inside sup/sub tags (footnote markers, etc.)
+	let cleaned = text.replace(/<su[bp][^>]*>.*?<\/su[bp]>/gi, '');
+	
 	// Multi-pass sanitization to handle nested/malformed HTML
-	let cleaned = text;
 	let previousLength;
 	
 	// Keep removing HTML tags until no more are found
@@ -239,6 +259,11 @@ function cleanText(text) {
 		.replace(/&mdash;/g, '—')
 		.replace(/&[a-z]+;/gi, '') // Remove other HTML entities
 		.replace(/\[[^\]]+\]/g, '') // Remove reference markers
+		.replace(/́/g, '') // Remove stress marks (combining acute accent U+0301)
+		.replace(/\u0301/g, '') // Remove combining acute accent
+		.replace(/[\u200B-\u200D\uFEFF]/g, '') // Remove zero-width spaces and other invisible chars
+		.replace(/△/g, '') // Remove triangle symbols
+		.replace(/[*†‡§]/g, '') // Remove common footnote markers
 		.replace(/\s+/g, ' ')
 		.trim();
 }

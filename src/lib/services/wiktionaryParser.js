@@ -352,6 +352,12 @@ export function areWordsEquivalent(word1, word2, ignoreYo = false) {
 }
 
 /**
+ * Validation constants
+ */
+const MIN_REQUIRED_FORMS = 8; // Minimum forms needed for valid declension
+const MIN_CASES_REQUIRED = 4; // Minimum cases for partial validation
+
+/**
  * Validate that a declension object has valid, unique forms
  * @param {Object} declension - Declension object to validate
  * @returns {boolean} True if declension is valid
@@ -370,8 +376,8 @@ export function isValidDeclension(declension) {
 		...Object.values(plural)
 	].filter(form => form); // Filter out empty values
 	
-	// Check 1: Must have at least 8 forms (not all 12 required - some may be missing)
-	if (allForms.length < 8) {
+	// Check 1: Must have at least MIN_REQUIRED_FORMS forms (not all 12 required - some may be missing)
+	if (allForms.length < MIN_REQUIRED_FORMS) {
 		console.warn('Declension validation failed: too few forms');
 		return false;
 	}

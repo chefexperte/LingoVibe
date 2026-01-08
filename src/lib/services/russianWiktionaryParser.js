@@ -4,6 +4,13 @@
  */
 
 /**
+ * Configuration constants
+ */
+const REQUEST_TIMEOUT_MS = 8000; // Timeout for API requests in milliseconds
+const MIN_CASES_FOR_TABLE = 4; // Minimum cases required from table parsing
+const MIN_FALLBACK_FORMS = 2; // Minimum forms for fallback HTML extraction
+
+/**
  * Fetch and parse declension from Russian Wiktionary
  * @param {string} word - The Russian word
  * @returns {Promise<Object|null>} Declension data or null
@@ -13,7 +20,7 @@ export async function fetchFromRussianWiktionary(word) {
 		const url = `https://ru.wiktionary.org/api/rest_v1/page/html/${encodeURIComponent(word)}`;
 		
 		const controller = new AbortController();
-		const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+		const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 		
 		const response = await fetch(url, {
 			headers: {
@@ -141,7 +148,7 @@ function extractDeclensionFromTable(word, tableHTML) {
 	const singularCount = Object.keys(declension.declension.singular).length;
 	const pluralCount = Object.keys(declension.declension.plural).length;
 	
-	if (singularCount >= 4) { // At least 4 cases found
+	if (singularCount >= MIN_CASES_FOR_TABLE) { // At least MIN_CASES_FOR_TABLE cases found
 		return declension;
 	}
 	
@@ -200,8 +207,8 @@ function extractDeclensionFromHTML(word, html) {
 		}
 	}
 	
-	// Only return if we found at least 2 forms
-	if (foundCount >= 2) {
+	// Only return if we found at least MIN_FALLBACK_FORMS forms
+	if (foundCount >= MIN_FALLBACK_FORMS) {
 		return declension;
 	}
 	
@@ -216,8 +223,18 @@ function extractDeclensionFromHTML(word, html) {
 function cleanText(text) {
 	if (!text) return '';
 	
-	return text
-		.replace(/<[^>]+>/g, '') // Remove HTML tags
+	// Multi-pass sanitization to handle nested/malformed HTML
+	let cleaned = text;
+	let previousLength;
+	
+	// Keep removing HTML tags until no more are found
+	do {
+		previousLength = cleaned.length;
+		cleaned = cleaned.replace(/<[^>]*>/g, ''); // Remove HTML tags
+	} while (cleaned.length !== previousLength);
+	
+	// Now safely clean up entities and formatting
+	return cleaned
 		.replace(/&nbsp;/g, ' ')
 		.replace(/&mdash;/g, '—')
 		.replace(/&[a-z]+;/gi, '') // Remove other HTML entities

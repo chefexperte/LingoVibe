@@ -61,6 +61,9 @@ export const quizHistory = createQuizHistory();
 
 /**
  * Derived store for quiz progress
+ * Note: Progress is based on answers submitted, not currentQuestionIndex.
+ * This ensures accurate progress display from question 1 onwards.
+ * Each question can only be answered once (enforced by 'submitted' flag in quiz components).
  */
 export const quizProgress = derived(quizState, $state => {
 	if (!$state.isActive || $state.totalQuestions === 0) return 0;

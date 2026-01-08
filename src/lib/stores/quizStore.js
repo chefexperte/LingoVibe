@@ -20,7 +20,8 @@ const initialState = {
 	settings: {
 		quizType: 'all',
 		difficulty: 'medium',
-		questionCount: 10
+		questionCount: 10,
+		selectedCases: ['nominative', 'genitive', 'dative', 'accusative', 'instrumental', 'prepositional']
 	}
 };
 
@@ -86,7 +87,8 @@ export function startQuiz(settings = {}) {
 		settings: {
 			quizType: settings.quizType || 'all',
 			difficulty: settings.difficulty || 'medium',
-			questionCount: settings.questionCount || 10
+			questionCount: settings.questionCount || 10,
+			selectedCases: settings.selectedCases || ['nominative', 'genitive', 'dative', 'accusative', 'instrumental', 'prepositional']
 		},
 		totalQuestions: settings.questionCount || 10
 	}));
@@ -251,4 +253,72 @@ export function getOverallStats(history = null) {
 export function resetQuizData() {
 	quizState.set(initialState);
 	quizHistory.clear();
+}
+
+/**
+ * Calculate XP earned from a quiz based on performance and settings
+ * @param {Object} settings - Quiz settings (quizType, difficulty, questionCount)
+ * @param {number} accuracy - Quiz accuracy percentage (0-100)
+ * @returns {number} XP earned
+ */
+export function calculateQuizXP(settings, accuracy) {
+	// Base XP by difficulty
+	const baseXP = {
+		easy: 20,
+		medium: 30,
+		hard: 50
+	};
+
+	// Quiz type multipliers
+	const quizTypeMultipliers = {
+		all: 1.2,                    // All Types (Mixed) - harder because unpredictable
+		'case-formation': 1.1,       // Fill-in - requires typing
+		'case-formation-mc': 1.0,    // Multiple Choice - base
+		'case-identification': 1.0,  // Case Identification - base
+		'sentence-completion': 1.15  // Sentence Completion - more complex
+	};
+
+	// Question count multipliers
+	const questionCountMultipliers = {
+		5: 1.0,
+		10: 1.2,
+		20: 1.5
+	};
+
+	// Accuracy multipliers
+	let accuracyMultiplier;
+	if (accuracy >= 100) {
+		accuracyMultiplier = 1.5;  // Perfect bonus!
+	} else if (accuracy >= 80) {
+		accuracyMultiplier = 1.2;
+	} else if (accuracy >= 60) {
+		accuracyMultiplier = 1.0;
+	} else if (accuracy >= 40) {
+		accuracyMultiplier = 0.8;
+	} else {
+		accuracyMultiplier = 0.5;  // Still get something for trying!
+	}
+
+	// Calculate total XP
+	const base = baseXP[settings.difficulty] || 30;
+	const typeMultiplier = quizTypeMultipliers[settings.quizType] || 1.0;
+	const countMultiplier = questionCountMultipliers[settings.questionCount] || 1.0;
+
+	const totalXP = Math.round(base * typeMultiplier * countMultiplier * accuracyMultiplier);
+	
+	return totalXP;
+}
+
+/**
+ * Calculate XP range for quiz preview
+ * @param {Object} settings - Quiz settings (quizType, difficulty, questionCount)
+ * @returns {Object} Object with minXP and maxXP
+ */
+export function calculateQuizXPRange(settings) {
+	// Min XP is at 40% accuracy (0.5x multiplier)
+	const minXP = calculateQuizXP(settings, 40);
+	// Max XP is at 100% accuracy (1.5x multiplier)
+	const maxXP = calculateQuizXP(settings, 100);
+	
+	return { minXP, maxXP };
 }

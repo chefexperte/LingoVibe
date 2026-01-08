@@ -6,6 +6,7 @@
 	import WiktionaryAttribution from './WiktionaryAttribution.svelte';
 	import QuizFeedback from './QuizFeedback.svelte';
 	import { validateMultipleAnswer } from '$lib/services/quizGenerator.js';
+	import { quizState } from '$lib/stores/quizStore.js';
 
 	export let quiz = null;
 	export let onSubmit = () => {};
@@ -14,6 +15,9 @@
 	let selectedCases = [];
 	let submitted = false;
 	let validationResult = null;
+
+	$: state = $quizState;
+	$: isLastQuestion = state.currentQuestionIndex + 1 >= state.totalQuestions;
 
 	function toggleCase(caseName) {
 		if (submitted) return;
@@ -101,7 +105,7 @@
 			</button>
 		{:else}
 			<button class="btn btn-secondary next-btn" on:click={handleNext}>
-				Next Question →
+				{isLastQuestion ? 'Show Results 🎉' : 'Next Question →'}
 			</button>
 		{/if}
 	</div>

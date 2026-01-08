@@ -224,6 +224,17 @@ export function getCompletedCount(lang) {
 }
 
 /**
+ * Add XP to the total
+ * @param {number} amount - Amount of XP to add
+ */
+export function addXP(amount) {
+	if (amount > 0) {
+		totalXP.update(xp => xp + amount);
+		updateStreak();
+	}
+}
+
+/**
  * Reset all progress (for testing)
  */
 export function resetProgress() {

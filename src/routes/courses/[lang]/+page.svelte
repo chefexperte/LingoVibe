@@ -58,7 +58,7 @@
 			<div class="coming-soon-icon">🚧</div>
 			<h2>Coming Soon!</h2>
 			<p>We're working hard to bring you an amazing {currentLang.name} learning experience.</p>
-			<p>In the meantime, check out our <a href="{base}/learn/ru">Russian course</a> which is fully available!</p>
+			<p>In the meantime, check out our <a href="{base}/courses/ru">Russian course</a> which is fully available!</p>
 		</div>
 	{:else if currentLang.status === 'unknown'}
 		<div class="coming-soon-message">
@@ -72,7 +72,7 @@
 		<div>
 			{#each lessons as lesson}
 				{#if lesson.status === 'available'}
-					<a href="{base}/learn/{lang}/lesson/{lesson.id}" class="lesson-item {lesson.status}">
+					<a href="{base}/courses/{lang}/lesson/{lesson.id}" class="lesson-item {lesson.status}">
 						<div class="lesson-icon {lesson.type} {lesson.status === 'completed' ? 'completed' : ''}">
 							{lesson.icon}
 						</div>

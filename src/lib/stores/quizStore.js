@@ -160,6 +160,16 @@ export function endQuiz() {
 	
 	quizHistory.addResult(result);
 
+	// Update streak when quiz completed
+	import('./lessonStore.js').then(({ updateStreak }) => {
+		updateStreak();
+	});
+	
+	// Check for achievements
+	import('./achievementStore.js').then(({ checkAchievements }) => {
+		checkAchievements();
+	});
+
 	// Reset state
 	quizState.set(initialState);
 

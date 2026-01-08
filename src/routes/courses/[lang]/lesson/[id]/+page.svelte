@@ -79,11 +79,11 @@
 	}
 
 	function goToNextLesson() {
-		goto(`${base}/learn/${lang}/lesson/${lessonId + 1}`);
+		goto(`${base}/courses/${lang}/lesson/${lessonId + 1}`);
 	}
 
 	function goBackToLanguage() {
-		goto(`${base}/learn/${lang}`);
+		goto(`${base}/courses/${lang}`);
 	}
 </script>
 

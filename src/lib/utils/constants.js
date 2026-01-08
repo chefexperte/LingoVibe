@@ -55,5 +55,6 @@ export const STORAGE_KEYS = {
 	STREAK: 'streak',
 	LAST_ACTIVE_DATE: 'lastActiveDate',
 	WELCOME_SCREEN_SEEN: 'welcomeScreenSeen',
-	QUIZ_HISTORY: 'quizHistory'
+	QUIZ_HISTORY: 'quizHistory',
+	ACHIEVEMENTS: 'achievements'
 };

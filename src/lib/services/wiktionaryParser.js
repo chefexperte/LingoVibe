@@ -350,3 +350,107 @@ export function areWordsEquivalent(word1, word2, ignoreYo = false) {
 	
 	return false;
 }
+
+/**
+ * Validate that a declension object has valid, unique forms
+ * @param {Object} declension - Declension object to validate
+ * @returns {boolean} True if declension is valid
+ */
+export function isValidDeclension(declension) {
+	if (!declension || !declension.declension) return false;
+	
+	const { singular, plural } = declension.declension;
+	
+	// Check that both singular and plural exist
+	if (!singular || !plural) return false;
+	
+	// Collect all forms
+	const allForms = [
+		...Object.values(singular),
+		...Object.values(plural)
+	].filter(form => form); // Filter out empty values
+	
+	// Check 1: Must have at least 8 forms (not all 12 required - some may be missing)
+	if (allForms.length < 8) {
+		console.warn('Declension validation failed: too few forms');
+		return false;
+	}
+	
+	// Check 2: No form should be empty string
+	if (allForms.some(form => !form || form === '')) {
+		console.warn('Declension validation failed: empty forms found');
+		return false;
+	}
+	
+	// Check 3: Not all forms should be identical (indicates parsing failure)
+	const uniqueForms = new Set(allForms);
+	if (uniqueForms.size === 1) {
+		console.warn('Declension validation failed: all forms identical');
+		return false;
+	}
+	
+	// Check 4: Singular should have at least some different forms
+	const singularForms = Object.values(singular).filter(f => f);
+	const uniqueSingular = new Set(singularForms);
+	if (singularForms.length >= 4 && uniqueSingular.size === 1) {
+		console.warn('Declension validation failed: all singular forms identical');
+		return false;
+	}
+	
+	// Check 5: At least some variation between singular and plural
+	// (but allow cases where they're the same, like neuter accusative)
+	const singularSet = new Set(Object.values(singular).filter(f => f));
+	const pluralSet = new Set(Object.values(plural).filter(f => f));
+	const overlap = [...singularSet].filter(x => pluralSet.has(x));
+	
+	// If ALL singular forms appear in plural AND plural has no unique forms, it's likely wrong
+	if (singularSet.size > 0 && overlap.length === singularSet.size && overlap.length === pluralSet.size) {
+		console.warn('Declension validation failed: singular equals plural exactly');
+		return false;
+	}
+	
+	return true;
+}
+
+/**
+ * Format declension for display, replacing invalid data with "-"
+ * @param {Object} declension - Declension object
+ * @returns {Object} Formatted declension with "-" for missing data
+ */
+export function formatDeclensionForDisplay(declension) {
+	const emptyForm = {
+		singular: {
+			nominative: '-',
+			genitive: '-',
+			dative: '-',
+			accusative: '-',
+			instrumental: '-',
+			prepositional: '-'
+		},
+		plural: {
+			nominative: '-',
+			genitive: '-',
+			dative: '-',
+			accusative: '-',
+			instrumental: '-',
+			prepositional: '-'
+		}
+	};
+	
+	if (!declension || !isValidDeclension(declension)) {
+		return {
+			word: declension?.word || '',
+			gender: declension?.gender || 'unknown',
+			animacy: declension?.animacy || 'unknown',
+			declension: emptyForm,
+			transliteration: declension?.transliteration || '',
+			translation: declension?.translation || '',
+			sourceUrl: declension?.sourceUrl || '',
+			fromWiktionary: false,
+			isFallback: true,
+			error: 'Declension data unavailable'
+		};
+	}
+	
+	return declension;
+}

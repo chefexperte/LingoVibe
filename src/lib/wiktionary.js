@@ -250,13 +250,16 @@ export function clearCache() {
 /**
  * Fetch full declension data for a Russian noun
  * Returns all 6 cases in singular and plural forms
+ * Uses fallback chain: Russian Wiktionary -> Irregular data -> English Wiktionary -> Rule-based
  * @param {string} word - The Russian word
  * @param {Object} metadata - Optional metadata (gender, animacy, translation)
  * @returns {Promise<Object>} Full declension data
  */
 export async function fetchFullDeclension(word, metadata = {}) {
-	// Import parser dynamically to avoid circular dependencies
-	const { parseFullDeclension } = await import('./services/wiktionaryParser.js');
+	// Import parsers dynamically to avoid circular dependencies
+	const { parseFullDeclension, isValidDeclension, formatDeclensionForDisplay } = await import('./services/wiktionaryParser.js');
+	const { fetchFromRussianWiktionary, inferGenderFromHTML, inferAnimacyFromHTML } = await import('./services/russianWiktionaryParser.js');
+	const { getIrregularDeclension } = await import('./data/irregularNouns.js');
 	
 	// Check cache first
 	const cacheKey = `full_${word}`;
@@ -264,7 +267,42 @@ export async function fetchFullDeclension(word, metadata = {}) {
 		return cache.get(cacheKey);
 	}
 
+	// Method 1: Try Russian Wiktionary (most reliable)
 	try {
+		console.log(`Fetching declension for "${word}" from Russian Wiktionary...`);
+		const ruResult = await fetchFromRussianWiktionary(word);
+		
+		if (ruResult && isValidDeclension(ruResult)) {
+			// Enrich with metadata
+			const enrichedResult = {
+				...ruResult,
+				gender: ruResult.gender || metadata.gender || inferGender(word),
+				animacy: ruResult.animacy || metadata.animacy || 'inanimate',
+				transliteration: ruResult.transliteration || metadata.transliteration || '',
+				translation: ruResult.translation || metadata.translation || word,
+				sourceUrl: `https://ru.wiktionary.org/wiki/${encodeURIComponent(word)}`,
+				fromWiktionary: true
+			};
+			
+			cache.set(cacheKey, enrichedResult);
+			console.log(`✓ Successfully parsed "${word}" from Russian Wiktionary`);
+			return enrichedResult;
+		}
+	} catch (error) {
+		console.log(`Russian Wiktionary failed for "${word}":`, error.message);
+	}
+
+	// Method 2: Try hardcoded irregular nouns
+	const irregularData = getIrregularDeclension(word);
+	if (irregularData && isValidDeclension(irregularData)) {
+		console.log(`✓ Using hardcoded irregular data for "${word}"`);
+		cache.set(cacheKey, irregularData);
+		return irregularData;
+	}
+
+	// Method 3: Try English Wiktionary
+	try {
+		console.log(`Fetching declension for "${word}" from English Wiktionary...`);
 		const params = new URLSearchParams({
 			action: 'parse',
 			page: word,
@@ -285,31 +323,40 @@ export async function fetchFullDeclension(word, metadata = {}) {
 
 		clearTimeout(timeoutId);
 
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
+		if (response.ok) {
+			const data = await response.json();
+
+			if (!data.error) {
+				// Parse the wikitext to extract full declension information
+				const wikitext = data.parse?.wikitext?.['*'] || '';
+				const parsedData = parseFullDeclension(word, wikitext, metadata);
+
+				if (isValidDeclension(parsedData)) {
+					console.log(`✓ Successfully parsed "${word}" from English Wiktionary`);
+					cache.set(cacheKey, parsedData);
+					return parsedData;
+				}
+			}
 		}
-
-		const data = await response.json();
-
-		if (data.error) {
-			throw new Error(data.error.info);
-		}
-
-		// Parse the wikitext to extract full declension information
-		const wikitext = data.parse?.wikitext?.['*'] || '';
-		const parsedData = parseFullDeclension(word, wikitext, metadata);
-
-		// Cache the result
-		cache.set(cacheKey, parsedData);
-
-		return parsedData;
 	} catch (error) {
-		console.error(`Error fetching full declension for "${word}":`, error);
+		console.log(`English Wiktionary failed for "${word}":`, error.message);
+	}
 
-		// Return fallback with metadata if provided
-		const fallback = generateFallbackDeclension(word, metadata);
+	// Method 4: Use rule-based fallback (will likely be invalid for irregular words)
+	console.log(`⚠ Using rule-based fallback for "${word}" (may be incorrect)`);
+	const fallback = generateFallbackDeclension(word, metadata);
+	
+	// Only cache if it passes validation, otherwise return formatted with "-"
+	if (isValidDeclension(fallback)) {
 		cache.set(cacheKey, fallback);
 		return fallback;
+	} else {
+		// Return formatted version with "-" for missing data
+		const formatted = formatDeclensionForDisplay(null);
+		formatted.word = word;
+		formatted.translation = metadata.translation || word;
+		// Don't cache failed results
+		return formatted;
 	}
 }
 

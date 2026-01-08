@@ -3,7 +3,6 @@
 	 * Quiz feedback component
 	 * Shows answer correctness, full declension table, and Wiktionary attribution
 	 */
-	import WiktionaryAttribution from './WiktionaryAttribution.svelte';
 
 	export let correct = false;
 	export let userAnswer = '';
@@ -55,7 +54,7 @@
 	{#if declension}
 		<div class="declension-table">
 			<div class="table-header">
-				<h5>Full Declension of "{word}" ({wordTranslation}) <WiktionaryAttribution /></h5>
+				<h5>Full Declension of "{word}" ({wordTranslation})</h5>
 			</div>
 			
 			<div class="table-grid">
@@ -88,11 +87,6 @@
 			</div>
 		</div>
 	{/if}
-
-	<!-- Wiktionary Attribution -->
-	<div class="attribution-footer">
-		<small>Data sourced from Wiktionary</small>
-	</div>
 </div>
 
 <style>
@@ -218,13 +212,6 @@
 		margin-top: 10px;
 		text-align: center;
 		color: var(--text-secondary);
-	}
-
-	.attribution-footer {
-		margin-top: 15px;
-		text-align: center;
-		color: var(--text-secondary);
-		font-size: 12px;
 	}
 
 	@keyframes slideIn {

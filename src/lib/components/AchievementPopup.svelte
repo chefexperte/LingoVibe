@@ -82,9 +82,37 @@
 
 	@media (max-width: 768px) {
 		.achievement-popup {
+			top: 70px;
 			right: 10px;
 			left: 10px;
 			max-width: none;
+		}
+
+		.popup-content {
+			padding: 15px;
+		}
+
+		.popup-icon {
+			font-size: 48px;
+		}
+
+		.popup-info h3 {
+			font-size: 18px;
+		}
+
+		.popup-info p {
+			font-size: 13px;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.popup-body {
+			flex-direction: column;
+			text-align: center;
+		}
+
+		.popup-icon {
+			margin: 0 auto;
 		}
 	}
 </style>

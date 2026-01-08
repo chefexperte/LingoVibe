@@ -259,6 +259,10 @@
 	}
 
 	@media (max-width: 768px) {
+		.case-formation-quiz {
+			padding: 0;
+		}
+
 		.question-header {
 			flex-direction: column;
 			align-items: flex-start;
@@ -279,17 +283,23 @@
 		}
 
 		.word-translation {
-			font-size: 14px;
+			font-size: 15px;
+		}
+
+		.wiktionary-link {
+			width: 100%;
+			justify-content: center;
 		}
 
 		.answer-input {
-			padding: 12px 16px;
 			font-size: 16px;
+			padding: 14px;
 		}
 
 		.submit-btn,
 		.next-btn {
-			padding: 12px;
+			width: 100%;
+			padding: 14px;
 			font-size: 16px;
 		}
 	}

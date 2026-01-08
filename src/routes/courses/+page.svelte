@@ -234,12 +234,21 @@
 	}
 
 	@media (max-width: 768px) {
-		.courses-grid {
-			grid-template-columns: 1fr;
+		.courses-container {
+			padding: 15px;
 		}
 
 		.courses-header h1 {
 			font-size: 28px;
+		}
+
+		.courses-grid {
+			grid-template-columns: 1fr;
+			gap: 15px;
+		}
+
+		.course-flag {
+			font-size: 48px;
 		}
 	}
 </style>

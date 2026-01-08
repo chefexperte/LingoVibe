@@ -349,20 +349,55 @@
 	}
 
 	@media (max-width: 768px) {
-		.welcome-section h1 {
+		.stats-grid {
+			grid-template-columns: 1fr 1fr;
+			gap: 15px;
+		}
+
+		.stat-card {
+			padding: 15px;
+		}
+
+		.stat-value {
 			font-size: 28px;
 		}
 
-		.stats-grid {
-			grid-template-columns: 1fr;
+		.current-course-card,
+		.no-course-card {
+			padding: 20px;
 		}
 
 		.course-actions {
 			flex-direction: column;
+			gap: 10px;
+		}
+
+		.course-actions .btn {
+			width: 100%;
 		}
 
 		.achievements-grid {
 			grid-template-columns: 1fr;
+			gap: 15px;
+		}
+
+		.week-stats {
+			flex-direction: column;
+			gap: 15px;
+		}
+
+		.welcome-section h1 {
+			font-size: 28px;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.stats-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.welcome-section h1 {
+			font-size: 24px;
 		}
 	}
 </style>

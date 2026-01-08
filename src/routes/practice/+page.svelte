@@ -11,7 +11,8 @@
 	let quizSettings = {
 		quizType: 'all',
 		difficulty: 'medium',
-		questionCount: 10
+		questionCount: 10,
+		selectedCases: ['nominative', 'genitive', 'dative', 'accusative', 'instrumental', 'prepositional']
 	};
 	let showStats = false;
 	let stats = null;

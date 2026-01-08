@@ -42,9 +42,14 @@
 </script>
 
 <div class="case-identification-quiz">
+	<!-- Subtle attribution at top-right -->
+	<div class="quiz-attribution">
+		<WiktionaryAttribution />
+	</div>
+	
 	<div class="question-section">
 		<h3 class="question-text">
-			{quiz.question} <WiktionaryAttribution />
+			{quiz.question}
 		</h3>
 		
 		<div class="word-display">
@@ -117,6 +122,14 @@
 	.case-identification-quiz {
 		max-width: 600px;
 		margin: 0 auto;
+		position: relative;
+	}
+
+	.quiz-attribution {
+		position: absolute;
+		top: 0;
+		right: 0;
+		z-index: 10;
 	}
 
 	.question-section {

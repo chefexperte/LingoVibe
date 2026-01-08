@@ -40,9 +40,14 @@
 </script>
 
 <div class="sentence-completion-quiz">
+	<!-- Subtle attribution at top-right -->
+	<div class="quiz-attribution">
+		<WiktionaryAttribution />
+	</div>
+	
 	<div class="question-section">
 		<h3 class="question-text">
-			{quiz.question} <WiktionaryAttribution />
+			{quiz.question}
 		</h3>
 		
 		<!-- Russian Sentence -->
@@ -111,6 +116,14 @@
 	.sentence-completion-quiz {
 		max-width: 650px;
 		margin: 0 auto;
+		position: relative;
+	}
+
+	.quiz-attribution {
+		position: absolute;
+		top: 0;
+		right: 0;
+		z-index: 10;
 	}
 
 	.question-section {

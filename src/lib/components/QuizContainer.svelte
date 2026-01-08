@@ -80,7 +80,8 @@
 				metadata: {
 					gender: quiz.declension?.gender,
 					animacy: quiz.declension?.animacy,
-					difficulty: quiz.difficulty
+					difficulty: quiz.difficulty,
+					frequency: quiz.frequency || 5
 				}
 			});
 		} catch (err) {

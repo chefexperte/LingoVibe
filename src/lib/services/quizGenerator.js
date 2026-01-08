@@ -98,7 +98,8 @@ async function generateCaseFormationQuiz(difficulty, excludeWords = [], selected
 			correctAnswers: [correctAnswer], // For validation
 			declension: declension,
 			fromWiktionary: true,
-			difficulty: difficulty
+			difficulty: difficulty,
+			frequency: nounData.frequency || 5
 		};
 	} catch (error) {
 		console.error('Error generating case formation quiz:', error);
@@ -163,7 +164,8 @@ async function generateCaseFormationMCQuiz(difficulty, excludeWords = [], select
 			correctAnswer: correctAnswer,
 			declension: declension,
 			fromWiktionary: true,
-			difficulty: difficulty
+			difficulty: difficulty,
+			frequency: nounData.frequency || 5
 		};
 	} catch (error) {
 		console.error('Error generating case formation MC quiz:', error);
@@ -222,6 +224,7 @@ async function generateCaseIdentificationQuiz(difficulty, excludeWords = [], sel
 			declension: declension,
 			fromWiktionary: true,
 			difficulty: difficulty,
+			frequency: nounData.frequency || 5,
 			multipleCorrect: correctCases.length > 1
 		};
 	} catch (error) {
@@ -265,7 +268,8 @@ async function generateSentenceCompletionQuiz(difficulty, excludeWords = [], sel
 			declension: declension,
 			explanation: template.explanation,
 			fromWiktionary: true,
-			difficulty: difficulty
+			difficulty: difficulty,
+			frequency: nounData.frequency || 5
 		};
 	} catch (error) {
 		console.error('Error generating sentence completion quiz:', error);
@@ -326,7 +330,8 @@ async function generateSentenceCompletionMCQuiz(difficulty, excludeWords = [], s
 			declension: declension,
 			explanation: template.explanation,
 			fromWiktionary: true,
-			difficulty: difficulty
+			difficulty: difficulty,
+			frequency: nounData.frequency || 5
 		};
 	} catch (error) {
 		console.error('Error generating sentence completion MC quiz:', error);

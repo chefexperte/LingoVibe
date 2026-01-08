@@ -1,14 +1,13 @@
 <script>
 	export let wordData;
 
-	$: isMastered =
-		wordData.proficiency.percentage === 100 && wordData.proficiency.correct >= 10;
+	$: isMastered = wordData.proficiency.isMastered;
+	$: masteryProgress = wordData.proficiency.masteryProgress;
 
 	$: proficiencyColor = (() => {
-		const p = wordData.proficiency.percentage;
-		if (p === 100) return '#4ade80'; // green
-		if (p >= 75) return '#60a5fa'; // blue
-		if (p >= 50) return '#fbbf24'; // yellow
+		if (isMastered) return '#4ade80'; // green
+		if (masteryProgress >= 7) return '#60a5fa'; // blue
+		if (masteryProgress >= 4) return '#fbbf24'; // yellow
 		return '#f87171'; // red
 	})();
 
@@ -58,40 +57,60 @@
 	<!-- Overall Proficiency -->
 	<div class="proficiency-section">
 		<div class="proficiency-header">
-			<span class="proficiency-label">Overall Proficiency</span>
-			<span class="proficiency-value" style="color: {proficiencyColor}">
-				{wordData.proficiency.percentage}%
+			<span class="proficiency-label">
+				{isMastered ? 'Mastered!' : 'Progress to Mastery'}
 			</span>
+			{#if isMastered}
+				<span class="proficiency-value" style="color: {proficiencyColor}">
+					{wordData.proficiency.percentage}%
+				</span>
+			{:else}
+				<span class="proficiency-value" style="color: {proficiencyColor}">
+					{masteryProgress}/10
+				</span>
+			{/if}
 		</div>
 		<div class="proficiency-bar">
 			<div
 				class="proficiency-fill"
-				style="width: {wordData.proficiency.percentage}%; background: {proficiencyColor}"
+				style="width: {isMastered ? 100 : (masteryProgress * 10)}%; background: {proficiencyColor}"
 			></div>
 		</div>
 		<div class="proficiency-stats">
-			<span>{wordData.proficiency.correct} / {wordData.proficiency.total} correct</span>
-			<span class="proficiency-hint">
-				{#if wordData.proficiency.percentage === 100 && wordData.proficiency.correct < 10}
-					({10 - wordData.proficiency.correct} more to master!)
-				{/if}
-			</span>
+			{#if isMastered}
+				<span>✅ Master Level - {wordData.proficiency.correct} / {wordData.proficiency.total} correct overall</span>
+			{:else}
+				<span>{10 - masteryProgress} more correct in a row to master!</span>
+				<span class="proficiency-hint">({wordData.proficiency.correct} / {wordData.proficiency.total} total)</span>
+			{/if}
 		</div>
 	</div>
 
 	<!-- Form-Specific Proficiency (if noun/verb) -->
 	{#if Object.keys(wordData.forms).length > 0}
 		<div class="forms-section">
-			<div class="forms-header">Form Proficiency</div>
+			<div class="forms-header">Form Mastery</div>
 			<div class="forms-grid">
 				{#each Object.entries(wordData.forms) as [form, data]}
 					<div class="form-item">
-						<div class="form-name">{form}</div>
+						<div class="form-name">
+							{form}
+							{#if data.isMastered}
+								<span class="mastery-check">✅</span>
+							{/if}
+						</div>
 						<div class="form-progress">
 							<div class="form-bar">
-								<div class="form-fill" style="width: {data.percentage}%"></div>
+								<div 
+									class="form-fill" 
+									style="width: {data.isMastered ? 100 : (data.masteryProgress * 10)}%"
+								></div>
 							</div>
-							<span class="form-percent">{data.percentage}%</span>
+							{#if data.isMastered}
+								<span class="form-percent">{data.percentage}%</span>
+							{:else}
+								<span class="form-percent">{data.masteryProgress}/10</span>
+							{/if}
 						</div>
 						<div class="form-stats">
 							{data.correct}/{data.total}
@@ -255,6 +274,11 @@
 	.proficiency-hint {
 		font-style: italic;
 		color: var(--primary-color);
+	}
+
+	.mastery-check {
+		font-size: 12px;
+		margin-left: 5px;
 	}
 
 	.forms-section {
